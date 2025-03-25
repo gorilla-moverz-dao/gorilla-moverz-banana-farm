@@ -1,36 +1,35 @@
-import {
-  isRedirectable,
-  useWallet,
-  Wallet,
-  WalletReadyState,
-  WalletName,
-  AptosStandardSupportedWallet,
-  truncateAddress,
-} from "@aptos-labs/wallet-adapter-react";
 import { Badge, Box, Button, Image, Menu, MenuButton, MenuItem, MenuList, Text, Tooltip } from "@chakra-ui/react";
 import { FaChevronDown } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 import { SUPPORTED_WALLETS } from "../constants";
-
+import { IWallet, useWallet } from "@razorlabs/razorkit";
+import useMovement from "../hooks/useMovement";
 export function WalletSelector() {
-  const { connect, disconnect, account, wallets, connected, network, wallet } = useWallet();
+  const { select, disconnect, detectedWallets, configuredWallets, chain, name, account, connected } = useWallet();
+  const { truncateAddress } = useMovement();
+  const wallets = [...configuredWallets, ...detectedWallets];
+  console.log("wallets", wallets);
 
   const supportedWallets = wallets?.filter((wallet) => SUPPORTED_WALLETS.includes(wallet.name));
 
-  const onWalletSelected = (wallet: WalletName) => {
-    connect(wallet);
+  const onWalletSelected = (wallet: string) => {
+    select(wallet);
   };
 
   const getLabel = () => {
     return (
       <>
-        {network && <p>Network: {network?.url}</p>}
-        {wallet && <p>Wallet: {wallet.name}</p>}
+        {chain && <p>Network: {chain.rpcUrl}</p>}
+        {name && <p>Wallet: {name}</p>}
       </>
     );
   };
 
-  const buttonText = account?.ansName ? account?.ansName : truncateAddress(account?.address);
+  const buttonText = account?.label
+    ? account?.label
+    : account?.address
+      ? truncateAddress(account?.address.toString())
+      : "Connect Wallet";
 
   if (connected) {
     return (
@@ -49,7 +48,7 @@ export function WalletSelector() {
           Connect Wallet
         </MenuButton>
         <MenuList>
-          {supportedWallets?.map((wallet: Wallet | AptosStandardSupportedWallet) => {
+          {supportedWallets?.map((wallet) => {
             return walletView(wallet, onWalletSelected);
           })}
         </MenuList>
@@ -58,20 +57,18 @@ export function WalletSelector() {
   );
 }
 
-const walletView = (wallet: Wallet | AptosStandardSupportedWallet, onWalletSelected: (wallet: WalletName) => void) => {
-  const isWalletReady =
-    wallet.readyState === WalletReadyState.Installed || wallet.readyState === WalletReadyState.Loadable;
-
+const walletView = (wallet: IWallet, onWalletSelected: (wallet: string) => void) => {
+  const isWalletReady = wallet.installed;
   // The user is on a mobile device
-  if (!isWalletReady && isRedirectable()) {
-    const mobileSupport = (wallet as Wallet).deeplinkProvider;
+  if (!isWalletReady) {
+    const mobileSupport = false; //(wallet as AdapterWallet).de.deeplinkProvider;
     // If the user has a deep linked app, show the wallet
     if (mobileSupport) {
       return (
         <MenuItem key={wallet.name} onClick={() => onWalletSelected(wallet.name)}>
           <div className="wallet-menu-wrapper">
             <div className="wallet-name-wrapper">
-              <img src={wallet.icon} width={25} style={{ marginRight: 10 }} />
+              <img src={wallet.iconUrl} width={25} style={{ marginRight: 10 }} />
               <Text className="wallet-selector-text">{wallet.name}</Text>
             </div>
             <Button>
@@ -89,20 +86,16 @@ const walletView = (wallet: Wallet | AptosStandardSupportedWallet, onWalletSelec
       <MenuItem
         key={wallet.name}
         onClick={
-          wallet.readyState === WalletReadyState.Installed || wallet.readyState === WalletReadyState.Loadable
+          wallet.installed
             ? () => onWalletSelected(wallet.name)
-            : () => window.open(wallet.url)
+            : () => window.open(wallet.downloadUrl.browserExtension)
         }
       >
-        <Image src={wallet.icon} width={25} marginRight={2} />
+        <Image src={wallet.iconUrl} width={25} marginRight={2} />
         <Box flex={1} paddingRight={4}>
           {wallet.name}
         </Box>
-        {wallet.readyState === WalletReadyState.Installed || wallet.readyState === WalletReadyState.Loadable ? (
-          <Badge>Connect</Badge>
-        ) : (
-          <Badge>Install</Badge>
-        )}
+        {wallet.installed ? <Badge>Connect</Badge> : <Badge>Install</Badge>}
       </MenuItem>
     );
   }

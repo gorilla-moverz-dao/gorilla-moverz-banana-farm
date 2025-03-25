@@ -1,11 +1,10 @@
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
 import { useFarmLeaderboard } from "./useFarmLeaderboard";
 import { Spinner, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import BoxBlurred from "../BoxBlurred";
-
+import useMovement from "../../hooks/useMovement";
 function FarmLeaderboard() {
   const { data, isLoading } = useFarmLeaderboard();
-
+  const { truncateAddress } = useMovement();
   if (isLoading) return <Spinner />;
 
   return (

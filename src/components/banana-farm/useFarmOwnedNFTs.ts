@@ -43,7 +43,7 @@ export function useFarmOwnedNFTs() {
 
   return useQuery({
     queryKey: ["owned_nfts", address],
-    refetchInterval: 1000 * 30,
+    refetchInterval: 1000 * 60,
     queryFn: async () => {
       try {
         if (!address) return null;

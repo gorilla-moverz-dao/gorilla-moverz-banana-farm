@@ -34,7 +34,7 @@ export function useMintData(collection_id: `0x${string}`) {
 
   return useQuery({
     queryKey: ["collection_info", address, collection_id],
-    refetchInterval: 1000 * 30,
+    refetchInterval: 1000 * 60,
     queryFn: async () => {
       try {
         if (!collection_id) return null;

@@ -11,7 +11,7 @@ interface LeaderboardEntry {
 export function useFarmLeaderboard() {
   return useQuery({
     queryKey: ["leaderboard"],
-    refetchInterval: 1000 * 30,
+    refetchInterval: 1000 * 60 * 5,
     queryFn: async () => {
       try {
         const res = await supabase.functions.invoke<LeaderboardEntry[]>("banana-farm-leaderboard");

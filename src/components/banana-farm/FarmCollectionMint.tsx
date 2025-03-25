@@ -1,5 +1,4 @@
 import { FC, FormEvent, useState } from "react";
-import { truncateAddress } from "@aptos-labs/wallet-adapter-react";
 import { useMintData } from "../../hooks/useMintData";
 import {
   Box,
@@ -23,7 +22,7 @@ import useFarmCollection from "./useFarmCollection";
 import BoxBlurred from "../BoxBlurred";
 import FarmAlert from "./FarmAlert";
 import useLaunchpad from "../../hooks/useLaunchpad";
-
+import useMovement from "../../hooks/useMovement";
 interface Props {
   collectionId: `0x${string}`;
 }
@@ -153,6 +152,7 @@ function FarmCollectionMint({ collectionId }: Props) {
 }
 
 const AddressButton: FC<{ address: string }> = ({ address }) => {
+  const { truncateAddress } = useMovement();
   const [copied, setCopied] = useState(false);
 
   async function onCopy() {
