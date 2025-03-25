@@ -13,7 +13,8 @@
     "build-abi": "tsx ./scripts/build-abi.ts",
     "resize-images": "tsx ./scripts/resize-images.ts",
     "generate:database-types": "supabase gen types --lang=typescript --local > src/database.types.ts && supabase gen types --lang=typescript --local > supabase/functions/_shared/database.types.ts",
-    "generate:graphql-types": "graphql-codegen --config codegen.ts"
+    "generate:graphql-types": "graphql-codegen --config codegen.ts",
+    "dev:supabase": "supabase functions serve --env-file ./supabase/.env.local"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "1.27.1",

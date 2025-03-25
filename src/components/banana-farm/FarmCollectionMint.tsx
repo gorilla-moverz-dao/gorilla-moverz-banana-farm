@@ -9,8 +9,10 @@ import {
   IconButton,
   Image,
   Progress,
+  Spinner,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { NETWORK_NAME } from "../../constants";
 import { formatDate } from "../../helpers/date-functions";
@@ -28,10 +30,12 @@ interface Props {
 }
 
 function FarmCollectionMint({ collectionId }: Props) {
+  const toast = useToast();
   const { data, refetch: refetchMint } = useMintData(collectionId);
   const { address, mintNFT } = useLaunchpad();
   const { refetch: refetchOwned } = useFarmOwnedNFTs();
   const col = useFarmCollection(collectionId);
+  const [minting, setMinting] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const discordText =
@@ -50,9 +54,21 @@ function FarmCollectionMint({ collectionId }: Props) {
     e.preventDefault();
     if (!address || !data?.isMintActive) return;
 
-    await mintNFT(collection?.collection_id as `0x${string}`);
-    refetchOwned();
-    refetchMint();
+    try {
+      setMinting(true);
+      await mintNFT(collection?.collection_id as `0x${string}`);
+      refetchOwned();
+      refetchMint();
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error minting NFT",
+        description: "Please try again: " + error,
+        status: "error",
+      });
+    } finally {
+      setMinting(false);
+    }
   };
 
   return (
@@ -86,7 +102,14 @@ function FarmCollectionMint({ collectionId }: Props) {
                     <>
                       {data?.isAllowlisted && (
                         <Button type="submit" disabled={!data?.isMintActive || !data.isAllowlisted}>
-                          Mint
+                          {minting ? (
+                            <>
+                              <Spinner marginRight={2} />
+                              Minting...
+                            </>
+                          ) : (
+                            "Mint"
+                          )}
                         </Button>
                       )}
                       {!data?.isAllowlisted && (
@@ -102,7 +125,7 @@ function FarmCollectionMint({ collectionId }: Props) {
               </Box>
 
               <Box flex={1}>
-                {clampNumber(totalMinted)} / {clampNumber(maxSupply, undefined, 10000)} Minted
+                {clampNumber(totalMinted)} / {clampNumber(maxSupply, undefined, 100000)} Minted
                 <Progress value={(totalMinted / maxSupply) * 100} className="h-2" />
               </Box>
             </Flex>
