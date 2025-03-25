@@ -48,9 +48,9 @@ async function nft(req: Request, _connInfo: ConnInfo, params: PathParams) {
   const nft: BananaFarmerNFTMetadata = {
     name: `${data.banana_farm_collections.name} | #${data.nft_number}`,
     description: `${data.banana_farm_collections.name} | #${data.nft_number}`,
-    image: `https://gorilla-moverz.xyz/nfts/${slug}/images/${data.image}`,
+    image: `https://farm.gorilla-moverz.xyz/nfts/${slug}/images/${data.image}`,
     attributes: [],
-    external_url: `https://gorilla-moverz.xyz/bananas`,
+    external_url: `https://farm.gorilla-moverz.xyz`,
   };
 
   return json(nft, {

@@ -101,7 +101,7 @@ function FarmCreateCollection() {
             <FormControl isInvalid={!!errors.projectUri} marginBottom={4}>
               <FormLabel>Project uri</FormLabel>
               <Input
-                {...register("projectUri", { value: "https://gorilla-moverz.xyz/nfts/farmer/collection.json" })}
+                {...register("projectUri", { value: "https://farm.gorilla-moverz.xyz/nfts/farmer/collection.json" })}
                 id="projectUri"
                 _placeholder={{ opacity: 1, color: "gray.300" }}
               />

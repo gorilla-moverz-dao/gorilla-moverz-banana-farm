@@ -3,9 +3,9 @@ name = "Gorilla Moverz Banana Farm"
 version = "0.0.1"
 
 [addresses]
-GorillaMoverz = "ef88d140bd12edaa47736bb34f7af91c7a6cbb0f5853a0c334e04e451f416522"
-initial_creator_addr = "ef88d140bd12edaa47736bb34f7af91c7a6cbb0f5853a0c334e04e451f416522"
-minter = "0x0acb315a48512f7a3ed348702b8ff688794da809f62b0f1f06f5eb816427922b"
+GorillaMoverz = "8256914013a64dc4e17a4113095ad8e6971f79ffcd78a442f4fd2005394dd52a"
+initial_creator_addr = "8256914013a64dc4e17a4113095ad8e6971f79ffcd78a442f4fd2005394dd52a"
+minter = "0x8256914013a64dc4e17a4113095ad8e6971f79ffcd78a442f4fd2005394dd52a"
 
 [dependencies]
 AptosFramework = { git = "https://github.com/movementlabsxyz/aptos-core", rev = "movement", subdir = "aptos-move/framework/aptos-framework" }

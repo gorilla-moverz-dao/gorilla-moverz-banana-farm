@@ -2,8 +2,8 @@ import { Account, Aptos, AptosConfig, Ed25519PrivateKey, Network } from "npm:@ap
 
 const aptosConfig = new AptosConfig({
   network: Network.CUSTOM,
-  fullnode: "https://testnet.bardock.movementnetwork.xyz/v1",
-  indexer: "https://indexer.testnet.movementnetwork.xyz/v1/graphql",
+  fullnode: "https://mainnet.movementnetwork.xyz/v1",
+  indexer: "https://indexer.mainnet.movementnetwork.xyz/v1/graphql",
 });
 export const aptos = new Aptos(aptosConfig);
 const privateKey = new Ed25519PrivateKey(Deno.env.get("APTOS_PK")!);
