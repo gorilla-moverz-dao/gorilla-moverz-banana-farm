@@ -10,6 +10,6 @@ export const NETWORK_NAME = "mainnet";
 export const BANANA_CONTRACT_ADDRESS = "0x353a444dcf2827843d8de4b1457d2ced51d7d1e594ca1f22cea924a598bdf1b3";
 export const EXCLUDE_LEADERBOARD = [
   "0x" + MODULE_ADDRESS,
-  "0xf61ecd11706e1d124aacd8638971af00b55aa303bcf8b54054c0c3fc31071a3f",
+  "0xf192d23b0c11a2c1d235e861055e3e8f67da4044276b724d6aaf41cc321a4112",
 ];
 export const SUPPORTED_WALLETS = ["Nightly", "Razor Wallet" /*, "Leap Wallet"*/];

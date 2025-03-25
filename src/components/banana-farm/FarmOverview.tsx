@@ -24,6 +24,7 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
   const { address, farm } = useBananaFarm();
   const { refetch: refetchAssets } = useAssets();
   const toast = useToast();
+  const [farming, setFarming] = useState(false);
 
   const { data: farmed_data, refetch: refetchFarmed } = useFarmData();
 
@@ -31,6 +32,7 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
 
   const farmNFT = async (farmerNFT: `0x${string}`, partnerNFTs: `0x${string}`[]) => {
     try {
+      setFarming(true);
       const amount = await farm(farmerNFT, partnerNFTs);
       refetchFarmed();
 
@@ -47,6 +49,8 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
         colorScheme: "red",
         isClosable: true,
       });
+    } finally {
+      setFarming(false);
     }
     refetchAssets();
   };
@@ -113,6 +117,7 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                           onActivate={() =>
                             farmNFT(farmerNFT.current_token_data?.token_data_id as `0x${string}`, partnerNFTIds)
                           }
+                          loading={farming}
                         />
                         <Text paddingTop={2}>
                           <i>

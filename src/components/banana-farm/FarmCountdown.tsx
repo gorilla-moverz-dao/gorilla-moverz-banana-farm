@@ -1,7 +1,15 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Spinner } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
-export default function FarmCountdown({ seconds, onActivate }: { seconds: number; onActivate: () => void }) {
+export default function FarmCountdown({
+  seconds,
+  onActivate,
+  loading,
+}: {
+  seconds: number;
+  onActivate: () => void;
+  loading: boolean;
+}) {
   const [timeLeft, setTimeLeft] = useState({
     mins: Math.floor(seconds / 60),
     secs: seconds % 60,
@@ -36,7 +44,14 @@ export default function FarmCountdown({ seconds, onActivate }: { seconds: number
 
   return (
     <Button onClick={onActivate} colorScheme={enabled ? "green" : "gray"} disabled={!enabled}>
-      {buttonText}
+      {loading ? (
+        <>
+          <Spinner marginRight={2} />
+          Farming...
+        </>
+      ) : (
+        buttonText
+      )}
     </Button>
   );
 }
