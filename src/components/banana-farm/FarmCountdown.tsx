@@ -11,7 +11,8 @@ export default function FarmCountdown({
   loading: boolean;
 }) {
   const [timeLeft, setTimeLeft] = useState({
-    mins: Math.floor(seconds / 60),
+    hours: Math.floor(seconds / 3600),
+    mins: Math.floor((seconds % 3600) / 60),
     secs: seconds % 60,
   });
 
@@ -25,22 +26,23 @@ export default function FarmCountdown({
 
       if (difference <= 0) {
         clearInterval(interval);
-        setTimeLeft({ mins: 0, secs: 0 });
+        setTimeLeft({ hours: 0, mins: 0, secs: 0 });
       } else {
-        // Convert difference to minutes and seconds
+        // Convert difference to hours, minutes and seconds
+        const hours = Math.floor(difference / (1000 * 60 * 60));
         const mins = Math.floor((difference / (1000 * 60)) % 60);
         const secs = Math.floor((difference / 1000) % 60);
-        setTimeLeft({ mins, secs });
+        setTimeLeft({ hours, mins, secs });
       }
     }, 1000);
 
     return () => clearInterval(interval);
   }, [seconds]);
 
-  const enabled = timeLeft.mins <= 0 && timeLeft.secs <= 0;
+  const enabled = timeLeft.hours <= 0 && timeLeft.mins <= 0 && timeLeft.secs <= 0;
   const buttonText = enabled
     ? "Farm Bananas"
-    : `Farm Bananas in ${timeLeft.mins}:${timeLeft.secs < 10 ? `0${timeLeft.secs}` : timeLeft.secs}`;
+    : `Farm Bananas in ${timeLeft.hours}:${timeLeft.mins < 10 ? `0${timeLeft.mins}` : timeLeft.mins}:${timeLeft.secs < 10 ? `0${timeLeft.secs}` : timeLeft.secs}`;
 
   return (
     <Button onClick={onActivate} colorScheme={enabled ? "green" : "gray"} disabled={!enabled}>
