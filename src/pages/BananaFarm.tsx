@@ -120,9 +120,9 @@ function BananaFarm() {
                 <Heading
                   as="h1"
                   size={"xl"}
-                  paddingBottom={12}
+                  paddingBottom={{ base: 4, md: 12 }}
                   textAlign={"right"}
-                  paddingTop={4}
+                  paddingTop={{ base: 0, md: 4 }}
                   textShadow={"1px 1px 6px rgba(0, 0, 0, 1)"}
                 >
                   {activeNavigation?.name}

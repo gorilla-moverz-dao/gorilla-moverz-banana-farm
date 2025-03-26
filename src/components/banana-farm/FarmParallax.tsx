@@ -25,7 +25,12 @@ function FarmParallax() {
         </Box>
         <Box position={"absolute"} padding={10}>
           <MouseParallax strength={0.01}>
-            <Image src="/images/bananafarm/banana-farm-logo.png" alt="Banana farm logo" width={300} className="logo" />
+            <Image
+              src="/images/bananafarm/banana-farm-logo.png"
+              alt="Banana farm logo"
+              width={{ base: 160, md: 300 }}
+              className="logo"
+            />
           </MouseParallax>
         </Box>
       </Box>
