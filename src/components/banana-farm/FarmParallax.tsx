@@ -10,7 +10,8 @@ function FarmParallax() {
             objectFit={"cover"}
             src="/images/bananafarm/banana-farm-background.png"
             alt="Banana farm background"
-            width={1300}
+            width={{ base: "100%", md: 1300 }}
+            height={{ base: "100%", md: "auto" }}
           />
         </MouseParallax>
         <Box position={"absolute"} top={-20} left={-20} right={-20} bottom={-20}>
@@ -18,7 +19,8 @@ function FarmParallax() {
             <Image
               src="/images/bananafarm/banana-farm-trees.png"
               alt="Banana farm trees"
-              width={1300}
+              width={{ base: "100%", md: 1300 }}
+              height={{ base: "100%", md: "auto" }}
               objectFit={"cover"}
             />
           </MouseParallax>

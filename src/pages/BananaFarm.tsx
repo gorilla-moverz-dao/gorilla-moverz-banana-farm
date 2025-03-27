@@ -137,7 +137,7 @@ function BananaFarm() {
             </Flex>
           </ModalBody>
 
-          <ModalFooter></ModalFooter>
+          <ModalFooter display={{ base: "none", md: "block" }}></ModalFooter>
         </ModalContent>
       </Modal>
 
