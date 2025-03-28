@@ -1,5 +1,10 @@
 import { json, serve, validateRequest } from "https://deno.land/x/sift@0.6.0/mod.ts";
-import { DiscordCommandType, DiscordPostData, verifySignature } from "../_shared/discord-functions.ts";
+import {
+  DiscordCommandType,
+  DiscordPostData,
+  verifySignature,
+  createDiscordResponse,
+} from "../_shared/discord-functions.ts";
 import { supabaseClient } from "../_shared/supabase-client.ts";
 import { aptos } from "../_shared/aptos-client.ts";
 
@@ -50,12 +55,7 @@ async function home(request: Request) {
       .maybeSingle();
 
     if (!collection) {
-      return json({
-        type: 4,
-        data: {
-          content: "This server is not allowed to interact with this bot.",
-        },
-      });
+      return createDiscordResponse("This server is not allowed to interact with this bot.", true);
     }
 
     const address = data.options.find((option) => option.name === "address")?.value as string;
@@ -64,21 +64,11 @@ async function home(request: Request) {
     try {
       const accountInfo = await aptos.account.getAccountInfo({ accountAddress: address });
       if (!accountInfo) {
-        return json({
-          type: 4,
-          data: {
-            content: "Address not found",
-          },
-        });
+        return createDiscordResponse("Address not found", true);
       }
     } catch (ex) {
-      console.log(ex);
-      return json({
-        type: 4,
-        data: {
-          content: ex.data.message,
-        },
-      });
+      console.error(ex);
+      return createDiscordResponse(ex.message, true);
     }
 
     try {
@@ -104,19 +94,13 @@ async function home(request: Request) {
       // Respond to the initial interaction
       const initialResponse = json({
         type: 5, // Type 5 is a deferred response
+        flags: 64,
       });
 
       return initialResponse;
     } catch (ex) {
       console.log(ex);
-      return json({
-        // Type 4 responds with the below message retaining the user's
-        // input at the top.
-        type: 4,
-        data: {
-          content: ex.message,
-        },
-      });
+      return createDiscordResponse(ex.message, true);
     }
   }
 
