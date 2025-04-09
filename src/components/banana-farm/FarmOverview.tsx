@@ -1,5 +1,5 @@
 import { useFarmOwnedNFTs } from "./useFarmOwnedNFTs";
-import { Box, Flex, Image, Spinner, Text, useToast } from "@chakra-ui/react";
+import { Box, Flex, Image, Link, Spinner, Text, useToast, IconButton } from "@chakra-ui/react";
 import PageTitle from "../PageTitle";
 import FarmCollectionMint from "./FarmCollectionMint";
 import { useEffect, useState } from "react";
@@ -10,6 +10,9 @@ import FarmCountdown from "./FarmCountdown";
 import useFarmCollection from "./useFarmCollection";
 import BoxBlurred from "../BoxBlurred";
 import useBananaFarm from "../../hooks/useBananaFarm";
+import { NETWORK_NAME } from "../../constants";
+import { FaLink } from "react-icons/fa6";
+import useMovement from "../../hooks/useMovement";
 
 interface Props {
   collectionId: `0x${string}`;
@@ -20,6 +23,7 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
   const { data: ownedNFTs, isLoading } = useFarmOwnedNFTs();
   const farmerNFT = ownedNFTs?.find((nft) => nft.current_token_data?.collection_id === collectionId);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const { truncateAddress } = useMovement();
 
   const { address, farm } = useBananaFarm();
   const { refetch: refetchAssets } = useAssets();
@@ -143,7 +147,33 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                         </Text>
 
                         {partnerNFTIds.length > 0 && (
-                          <Text>You have {partnerNFTIds.length} Partner NFTs that will boost your farm. </Text>
+                          <>
+                            <Text>You have {partnerNFTIds.length} NFTs that will boost your farm. </Text>
+                            <Box paddingTop={2}>
+                              <details>
+                                <summary style={{ cursor: "pointer", marginBottom: "8px" }}>NFTs</summary>
+                                {partnerNFTIds.map((id) => (
+                                  <Flex key={id} gap={3} paddingY={1} alignItems="center">
+                                    <Link
+                                      href={`https://explorer.movementnetwork.xyz/token/${id}?network=${NETWORK_NAME}`}
+                                      isExternal
+                                    >
+                                      <IconButton
+                                        size="sm"
+                                        icon={<FaLink />}
+                                        aria-label="View on explorer"
+                                        variant="ghost"
+                                        alignSelf="flex-start"
+                                      />
+                                    </Link>
+                                    <Text fontFamily="monospace" fontSize="sm">
+                                      {truncateAddress(id)}
+                                    </Text>
+                                  </Flex>
+                                ))}
+                              </details>
+                            </Box>
+                          </>
                         )}
                       </Box>
                     )}
