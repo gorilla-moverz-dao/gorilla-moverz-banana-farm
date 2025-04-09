@@ -9,6 +9,9 @@ module GorillaMoverz::banana_farm_e2e {
     use std::signer;
     use aptos_framework::fungible_asset;
     use aptos_framework::primary_fungible_store;
+    use std::string;
+    use aptos_token_objects::token;
+    use minter::token_components;
 
     use GorillaMoverz::banana;
     use GorillaMoverz::banana_farm;
@@ -90,6 +93,97 @@ module GorillaMoverz::banana_farm_e2e {
         let partner_nft = launchpad::test_mint_nft(user1_address, partner_collection);
 
         banana_farm::farm(user1, nft, vector[nft, partner_nft]);
+    }
+
+    #[test(
+        aptos_framework = @0x1, creator = @GorillaMoverz, thirdparty_creator = @0x200, allowlist_manager = @0x300, user1 = @0x400
+    )]
+    #[expected_failure(abort_code = banana_farm::EWRONG_COLLECTION, location = banana_farm)]
+    fun test_verified_collections(
+        aptos_framework: &signer,
+        creator: &signer,
+        thirdparty_creator: &signer,
+        allowlist_manager: &signer,
+        user1: &signer
+    ) {
+        let user1_address = signer::address_of(user1);
+        let allowlist_manager_address = signer::address_of(allowlist_manager);
+
+        let (main_collection, partner_collection) = test_setup_farm(aptos_framework, creator, allowlist_manager, user1);
+        let nft = launchpad::test_mint_nft(user1_address, main_collection);
+        let partner_nft = launchpad::test_mint_nft(user1_address, partner_collection);
+
+        // Add partner collection as verified
+        let partner_collection_address = object::object_address(&partner_collection);
+        banana_farm::add_verified_collection(creator, partner_collection_address);
+
+        // Farm with partner NFT - should work and give boost
+        banana_farm::farm(user1, nft, vector[partner_nft]);
+
+        let asset = banana::get_metadata();
+        assert!(primary_fungible_store::balance(user1_address, asset) == 11_000_000_000, 1);
+
+        // Create two collections directly through token module (not through launchpad)
+        let verified_collection_constructor_ref = &collection::create_fixed_collection(
+            thirdparty_creator,
+            string::utf8(b"verified description"),
+            10,
+            string::utf8(b"verified"),
+            option::none(),
+            string::utf8(b"https://example.com/verified.json")
+        );
+        let verified_collection = object::object_from_constructor_ref<Collection>(verified_collection_constructor_ref);
+        let verified_nft_constructor_ref = &token::create(
+            thirdparty_creator,
+            string::utf8(b"verified"),
+            string::utf8(b"1"),
+            string::utf8(b"1"),
+            option::none(),
+            string::utf8(b"https://example.com/verified/1.json")
+        );
+        token_components::create_refs(verified_nft_constructor_ref);
+        let verified_nft = object::object_from_constructor_ref<aptos_token_objects::token::Token>(verified_nft_constructor_ref);
+        object::transfer(thirdparty_creator, verified_nft, user1_address);
+
+        let non_verified_collection_constructor_ref = &collection::create_fixed_collection(
+            thirdparty_creator,
+            string::utf8(b"non verified description"),
+            10,
+            string::utf8(b"non verified"),
+            option::none(),
+            string::utf8(b"https://example.com/non-verified.json")
+        );
+        object::object_from_constructor_ref<Collection>(non_verified_collection_constructor_ref);
+        let non_verified_nft_constructor_ref = &token::create(
+            thirdparty_creator,
+            string::utf8(b"non verified"),
+            string::utf8(b"1"),
+            string::utf8(b"1"),
+            option::none(),
+            string::utf8(b"https://example.com/non-verified/1.json")
+        );
+        token_components::create_refs(non_verified_nft_constructor_ref);
+        let non_verified_nft = object::object_from_constructor_ref<aptos_token_objects::token::Token>(non_verified_nft_constructor_ref);
+        object::transfer(thirdparty_creator, non_verified_nft, user1_address);
+
+        // Add verified collection to the verified list
+        let verified_collection_address = object::object_address(&verified_collection);
+        banana_farm::add_verified_collection(creator, verified_collection_address);
+
+        // Update timestamp to allow farming again
+        timestamp::update_global_time_for_test_secs(650);
+
+        // Farm with verified NFT - should work and give boost
+        banana_farm::farm(user1, nft, vector[verified_nft]);
+
+        let asset = banana::get_metadata();
+        assert!(primary_fungible_store::balance(user1_address, asset) == 22_000_000_000, 2);
+
+        // Update timestamp to allow farming again
+        timestamp::update_global_time_for_test_secs(850);
+
+        // This should fail with EWRONG_COLLECTION
+        banana_farm::farm(user1, nft, vector[non_verified_nft]);
     }
 
     #[test(
@@ -192,11 +286,11 @@ module GorillaMoverz::banana_farm_e2e {
 
         banana::test_init(creator);
 
-        banana::mint(creator, creator_address, 20_000_000_000);
+        banana::mint(creator, creator_address, 200_000_000_000);
 
         banana_farm::test_init(creator);
 
-        banana_farm::deposit(creator, 20_000_000_000);
+        banana_farm::deposit(creator, 200_000_000_000);
 
         launchpad::test_init(creator);
         let (main_collection, partner_collection) =

@@ -79,7 +79,21 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
 
   const partnerNFTIds = ownedNFTs
     ?.filter((nft) => nft.current_token_data?.collection_id !== collectionId)
-    .map((nft) => nft.current_token_data?.token_data_id as `0x${string}`);
+    .reduce((acc: `0x${string}`[], nft) => {
+      const collectionId = nft.current_token_data?.collection_id;
+      const tokenId = nft.current_token_data?.token_data_id as `0x${string}`;
+      if (
+        collectionId &&
+        !acc.some(
+          (id) =>
+            ownedNFTs?.find((n) => n.current_token_data?.token_data_id === id)?.current_token_data?.collection_id ===
+            collectionId,
+        )
+      ) {
+        acc.push(tokenId);
+      }
+      return acc;
+    }, []);
 
   return (
     <>

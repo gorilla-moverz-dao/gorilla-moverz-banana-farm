@@ -17,14 +17,14 @@
     "dev:supabase": "supabase functions serve --env-file ./supabase/.env.local"
   },
   "dependencies": {
-    "@aptos-labs/ts-sdk": "1.27.1",
+    "@aptos-labs/ts-sdk": "1.37.1",
     "@chakra-ui/react": "2.10.3",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@graphql-codegen/cli": "^5.0.2",
     "@hookform/resolvers": "^3.6.0",
     "@parcel/watcher": "^2.4.1",
-    "@razorlabs/razorkit": "^1.0.10",
+    "@razorlabs/razorkit": "^1.0.11",
     "@supabase/supabase-js": "^2.43.4",
     "@tanstack/react-query": "^5.45.1",
     "@thalalabs/surf": "^1.7.3",

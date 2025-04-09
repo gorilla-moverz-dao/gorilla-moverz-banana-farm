@@ -21,6 +21,10 @@ module GorillaMoverz::banana_farm {
     const EFUNDS_FROZEN: u64 = 7;
     const EFUNDS_NOT_FROZEN: u64 = 8;
 
+    struct VerifiedCollections has key {
+        collections: vector<address>
+    }
+
     struct BananaTreasury has key {
         coins: Object<FungibleStore>,
         store_extend_ref: ExtendRef,
@@ -49,6 +53,28 @@ module GorillaMoverz::banana_farm {
                 collection_address: option::none()
             }
         );
+
+        // Initialize verified collections
+        move_to(
+            deployer,
+            VerifiedCollections {
+                collections: vector::empty()
+            }
+        );
+    }
+
+    public entry fun init_verified_collections(deployer: &signer) {
+        assert!(is_admin(signer::address_of(deployer)), EONLY_ADMIN_CAN_UPDATE);
+        
+        // Only initialize if it doesn't already exist
+        if (!exists<VerifiedCollections>(@GorillaMoverz)) {
+            move_to(
+                deployer,
+                VerifiedCollections {
+                    collections: vector::empty()
+                }
+            );
+        };
     }
 
     public entry fun deposit(user: &signer, amount: u64) acquires BananaTreasury {
@@ -59,7 +85,7 @@ module GorillaMoverz::banana_farm {
         fungible_asset::deposit(treasury.coins, in);
     }
 
-    public entry fun farm(sender: &signer, nft: Object<Token>, partner_nfts: vector<Object<Token>>) acquires BananaTreasury {
+    public entry fun farm(sender: &signer, nft: Object<Token>, partner_nfts: vector<Object<Token>>) acquires BananaTreasury, VerifiedCollections {
         let account = signer::address_of(sender);
 
         assert!(object::owner(nft) == account, ENOT_OWNED_NFT);
@@ -74,14 +100,17 @@ module GorillaMoverz::banana_farm {
         vector::push_back(&mut collection_addresses, collection_address);
 
         let partner_nfts_len = vector::length(&partner_nfts);
+        let verified_collections = borrow_global<VerifiedCollections>(@GorillaMoverz);
+
         for (i in 0..partner_nfts_len) {
             let partner_nft = *vector::borrow(&partner_nfts, i);
             assert!(object::owner(partner_nft) == account, ENOT_OWNED_NFT);
 
-            let is_launchpad_collection = launchpad::verify_collection(partner_nft);
-            assert!(is_launchpad_collection, EWRONG_COLLECTION);
-
             let collection_address_partner = get_collection_address(partner_nft);
+            let is_launchpad_collection = launchpad::verify_collection(partner_nft);
+            let is_verified_collection = vector::contains(&verified_collections.collections, &collection_address_partner);
+            assert!(is_launchpad_collection || is_verified_collection, EWRONG_COLLECTION);
+
             let duplicate = vector::contains(&collection_addresses, &collection_address_partner);
             assert!(!duplicate, EDUPLICATE_COLLECTION);
             vector::push_back(&mut collection_addresses, collection_address_partner);
@@ -146,6 +175,23 @@ module GorillaMoverz::banana_farm {
         treasury.collection_address = option::some(collection_address);
     }
 
+    public entry fun add_verified_collection(sender: &signer, collection_address: address) acquires VerifiedCollections {
+        assert!(is_admin(signer::address_of(sender)), EONLY_ADMIN_CAN_UPDATE);
+
+        let collections = borrow_global_mut<VerifiedCollections>(@GorillaMoverz);
+        assert!(!vector::contains(&collections.collections, &collection_address), EDUPLICATE_COLLECTION);
+        vector::push_back(&mut collections.collections, collection_address);
+    }
+
+    public entry fun remove_verified_collection(sender: &signer, collection_address: address) acquires VerifiedCollections {
+        assert!(is_admin(signer::address_of(sender)), EONLY_ADMIN_CAN_UPDATE);
+
+        let collections = borrow_global_mut<VerifiedCollections>(@GorillaMoverz);
+        let (found, index) = vector::index_of(&collections.collections, &collection_address);
+        assert!(found, EWRONG_COLLECTION);
+        vector::remove(&mut collections.collections, index);
+    }
+
     fun is_admin(sender: address): bool {
         if (sender == @GorillaMoverz) { true }
         else { false }
@@ -180,6 +226,12 @@ module GorillaMoverz::banana_farm {
     public fun get_treasury_timeout(): u64 acquires BananaTreasury {
         let treasury = borrow_global_mut<BananaTreasury>(@GorillaMoverz);
         treasury.timeout_in_seconds
+    }
+
+    #[view]
+    public fun get_verified_collections(): vector<address> acquires VerifiedCollections {
+        let collections = borrow_global<VerifiedCollections>(@GorillaMoverz);
+        collections.collections
     }
 
     #[test_only]
