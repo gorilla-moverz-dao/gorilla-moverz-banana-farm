@@ -572,6 +572,9 @@ module GorillaMoverz::launchpad {
         let collection_owner_obj_signer = &object::generate_signer_for_extending(&collection_owner_config.extend_ref);
 
         let next_nft_id = *option::borrow(&collection::count(collection_obj)) + 1;
+        let name = &mut collection::name(collection_obj);
+        string::append(name, string::utf8(b" #"));
+        string::append(name, string_utils::to_string(&next_nft_id));
 
         let collection_uri = collection::uri(collection_obj);
         let nft_metadata_uri = construct_nft_metadata_uri(&collection_uri, next_nft_id);
@@ -581,9 +584,9 @@ module GorillaMoverz::launchpad {
                 collection_owner_obj_signer,
                 collection::name(collection_obj),
                 // placeholder value, please read description from json metadata in offchain storage
-                string_utils::to_string(&next_nft_id),
+                *name,
                 // placeholder value, please read name from json metadata in offchain storage
-                string_utils::to_string(&next_nft_id),
+                *name,
                 royalty::get(collection_obj),
                 nft_metadata_uri
             );

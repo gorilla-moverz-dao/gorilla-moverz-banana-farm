@@ -107,7 +107,6 @@ module GorillaMoverz::banana_farm_e2e {
         user1: &signer
     ) {
         let user1_address = signer::address_of(user1);
-        let allowlist_manager_address = signer::address_of(allowlist_manager);
 
         let (main_collection, partner_collection) = test_setup_farm(aptos_framework, creator, allowlist_manager, user1);
         let nft = launchpad::test_mint_nft(user1_address, main_collection);

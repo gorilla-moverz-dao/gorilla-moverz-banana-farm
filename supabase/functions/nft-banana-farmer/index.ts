@@ -43,7 +43,7 @@ async function nft(req: Request, _connInfo: ConnInfo, params: PathParams) {
     return new Response("Not found", { status: 404 });
   }
 
-  const imageUrl = `https://farm.gorilla-moverz.xyz/nfts/${slug}/images/${data.image}`;
+  const imageUrl = `https://farm.gorilla-moverz.xyz/nfts/${slug}/images/${data.image.replace(".png", ".webp")}`;
 
   // Redirect to the image URL
   return Response.redirect(imageUrl, 302);

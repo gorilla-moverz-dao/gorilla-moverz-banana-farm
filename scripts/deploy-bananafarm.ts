@@ -5,8 +5,8 @@ import { Account, UserTransactionResponse } from "@aptos-labs/ts-sdk";
 
 const moveDir = "move/";
 const aptosYml = moveDir + ".aptos/config.yaml";
-const mint_amount = 100_000_000;
-const deposit_amount = 10_000_000;
+const mint_amount = 10_000_000_000;
+const deposit_amount = 9_000_000_000;
 const publish = false;
 
 const admin = getSigner(aptosYml);
@@ -26,21 +26,22 @@ async function main() {
   await deposit(admin, deposit_amount);
 
   const collectionId = await createCollection(admin, {
-    collectionName: "Farmer | Gorilla Moverz",
+    collectionName: "Farmer | Banana Farm",
     collectionDescription:
       "Farmer plays a key role in the Gorilla Moverz ecosystem. They are responsible for planting and harvesting the bananas that are used to feed the Gorillas.",
     slug: "farmer",
-    maxSupply: 4000,
+    maxSupply: 100000,
     allowlistManager: admin.accountAddress.toString(),
   });
 
   await setCollectionAddress(admin, collectionId);
 
   const partnerCollectionId = await createCollection(admin, {
-    collectionName: "Gorillaz Partner 1",
-    collectionDescription: "Gorillaz Partner 1 Description",
-    slug: "partner1",
-    maxSupply: 2000,
+    collectionName: "Movecast | Banana Farm",
+    collectionDescription:
+      "The first community podcast on the Movementlabs ecosystem. Join to learn about the Movement Labs and ecosystem and all other important partners and projects building on MOVE.",
+    slug: "movecast",
+    maxSupply: 100000,
     allowlistManager: admin.accountAddress.toString(),
   });
   console.log("Partner Collection Id: ", partnerCollectionId);
@@ -78,7 +79,7 @@ async function createCollection(signer: Account, collection: CollectionConfig): 
     functionArguments: [
       collection.collectionDescription,
       collection.collectionName,
-      `https://gorilla-moverz.xyz/nfts/${collection.slug}/collection.json`,
+      `https://farm.gorilla-moverz.xyz/nfts/${collection.slug}/collection.json`,
       collection.maxSupply,
       royaltyPercentage,
       preMintAmount,
