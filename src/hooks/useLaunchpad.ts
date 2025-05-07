@@ -1,7 +1,7 @@
 import useMovement from "./useMovement";
 
 const useLaunchpad = () => {
-  const { address, signAndAwaitTransaction, createEntryPayload, launchpadABI, launchpadClient } = useMovement();
+  const { address, signAndAwaitTransaction, createEntryPayload, launchpadABI, launchpadViewClient } = useMovement();
 
   const mintNFT = async (collectionId: `0x${string}`) => {
     const response = await signAndAwaitTransaction(
@@ -15,14 +15,14 @@ const useLaunchpad = () => {
   };
 
   async function getStartAndEndTime(collection_id: `0x${string}`) {
-    const [mintStageRes] = await launchpadClient.view.get_active_or_next_mint_stage({
+    const [mintStageRes] = await launchpadViewClient.get_active_or_next_mint_stage({
       typeArguments: [],
       functionArguments: [collection_id],
     });
 
     const mintStage = mintStageRes.vec[0];
 
-    const startAndEndRes = await launchpadClient.view.get_mint_stage_start_and_end_time({
+    const startAndEndRes = await launchpadViewClient.get_mint_stage_start_and_end_time({
       typeArguments: [],
       functionArguments: [collection_id, mintStage as string],
     });
@@ -39,7 +39,7 @@ const useLaunchpad = () => {
 
   async function getIsAllowlisted(address: `0x${string}`, collection_id: `0x${string}`) {
     return (
-      await launchpadClient.view.is_allowlisted({
+      await launchpadViewClient.is_allowlisted({
         functionArguments: [address, collection_id],
         typeArguments: [],
       })

@@ -1,7 +1,7 @@
 import useMovement from "./useMovement";
 
 const useBananaFarm = () => {
-  const { address, signAndAwaitTransaction, createEntryPayload, bananaFarmABI, bananaFarmClient } = useMovement();
+  const { address, signAndAwaitTransaction, createEntryPayload, bananaFarmABI, bananaFarmViewClient } = useMovement();
 
   const farm = async (nft: `0x${string}`, partnerNfts: `0x${string}`[]) => {
     const response = await signAndAwaitTransaction(
@@ -19,7 +19,7 @@ const useBananaFarm = () => {
   };
 
   const getTreasuryTimeout = async () => {
-    const [response] = await bananaFarmClient.view.get_treasury_timeout({
+    const [response] = await bananaFarmViewClient.get_treasury_timeout({
       typeArguments: [],
       functionArguments: [],
     });
@@ -27,7 +27,7 @@ const useBananaFarm = () => {
   };
 
   const getCollectionAddress = async () => {
-    const [response] = await bananaFarmClient.view.collection_address({
+    const [response] = await bananaFarmViewClient.collection_address({
       typeArguments: [],
       functionArguments: [],
     });
@@ -36,7 +36,7 @@ const useBananaFarm = () => {
   };
 
   const getLastFarmed = async () => {
-    const [response] = await bananaFarmClient.view.last_farmed({
+    const [response] = await bananaFarmViewClient.last_farmed({
       typeArguments: [],
       functionArguments: [address!],
     });

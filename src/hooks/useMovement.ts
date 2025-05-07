@@ -1,9 +1,9 @@
 import {
-  aptosClient,
+  aptosReadOnlyClient,
   bananaFarmABI,
-  bananaFarmClient,
+  bananaFarmViewClient,
   launchpadABI,
-  launchpadClient,
+  launchpadViewClient,
 } from "../services/movement-client";
 import { AptosApiType, InputGenerateTransactionPayloadData, UserTransactionResponse } from "@aptos-labs/ts-sdk";
 import { useWallet } from "@razorlabs/razorkit";
@@ -16,7 +16,7 @@ const useMovement = () => {
   const signAndAwaitTransaction = async (data: InputGenerateTransactionPayloadData) => {
     const response = await signAndSubmitTransaction({ payload: data });
     if (response.status === "Approved") {
-      const transaction = await aptosClient.waitForTransaction({ transactionHash: response.args.hash });
+      const transaction = await aptosReadOnlyClient.waitForTransaction({ transactionHash: response.args.hash });
       return transaction as UserTransactionResponse;
     } else {
       console.log("Transaction rejected: ", response);
@@ -27,7 +27,7 @@ const useMovement = () => {
   const getAccountCoinsData = async () => {
     if (!account?.address) return [];
 
-    const tokens = await aptosClient.getAccountCoinsData({
+    const tokens = await aptosReadOnlyClient.getAccountCoinsData({
       accountAddress: account.address,
     });
     return tokens;
@@ -42,13 +42,13 @@ const useMovement = () => {
     signAndAwaitTransaction,
     getAccountCoinsData,
     createEntryPayload,
-    bananaFarmClient,
+    bananaFarmViewClient,
     bananaFarmABI,
-    launchpadClient,
+    launchpadViewClient,
     launchpadABI,
-    aptosClient,
+    aptosReadOnlyClient,
     graphqlRequest: request,
-    indexerUrl: aptosClient.config.getRequestUrl(AptosApiType.INDEXER),
+    indexerUrl: aptosReadOnlyClient.config.getRequestUrl(AptosApiType.INDEXER),
     truncateAddress,
   };
 };
