@@ -8,7 +8,6 @@ export function WalletSelector() {
   const { select, disconnect, detectedWallets, configuredWallets, chain, name, account, connected } = useWallet();
   const { truncateAddress } = useMovement();
   const wallets = [...configuredWallets, ...detectedWallets];
-  console.log("wallets", wallets);
 
   const supportedWallets = wallets?.filter((wallet) => SUPPORTED_WALLETS.includes(wallet.name));
 

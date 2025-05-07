@@ -2,7 +2,7 @@ import { useFarmOwnedNFTs } from "./useFarmOwnedNFTs";
 import { Box, Flex, Image, Link, Spinner, Text, useToast, IconButton } from "@chakra-ui/react";
 import PageTitle from "../PageTitle";
 import FarmCollectionMint from "./FarmCollectionMint";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Assets from "../Assets";
 import useAssets from "../../hooks/useAssets";
 import useFarmData from "./useFarmData";
@@ -22,7 +22,6 @@ interface Props {
 function FarmerOverview({ collectionId, enableFarming }: Props) {
   const { data: ownedNFTs, isLoading } = useFarmOwnedNFTs();
   const farmerNFT = ownedNFTs?.find((nft) => nft.current_token_data?.collection_id === collectionId);
-  const [imageUrl, setImageUrl] = useState<string>("");
   const { truncateAddress } = useMovement();
 
   const { address, farm } = useBananaFarm();
@@ -58,16 +57,6 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
     }
     refetchAssets();
   };
-
-  useEffect(() => {
-    if (farmerNFT) {
-      fetch(farmerNFT.current_token_data?.token_uri ?? "").then((res) => {
-        res.json().then((data) => {
-          setImageUrl(data.image);
-        });
-      });
-    }
-  }, [farmerNFT]);
 
   if (isLoading || !collection) return <Spinner />;
 
@@ -105,21 +94,18 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
         <>
           <Flex direction={{ base: "column", md: "row" }} gap={6}>
             <Box flex={2}>
-              {imageUrl && (
-                <Image rounded={8} src={imageUrl} style={{ boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.8)" }} />
-              )}
-              {!imageUrl && (
-                <>
-                  <Spinner />
-                  <Text>Loading image...</Text>
-                </>
+              {farmerNFT.current_token_data?.token_uri && (
+                <Image
+                  rounded={8}
+                  src={farmerNFT.current_token_data?.token_uri}
+                  style={{ boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.8)" }}
+                />
               )}
             </Box>
 
             <Box flex={3}>
               <BoxBlurred padding={4}>
                 <PageTitle size="lg" paddingTop={0}>
-                  {farmerNFT.current_token_data?.current_collection?.collection_name} | #
                   {farmerNFT.current_token_data?.token_name}
                 </PageTitle>
                 <Text paddingBottom={4}>{farmerNFT.current_token_data?.current_collection?.description}</Text>
