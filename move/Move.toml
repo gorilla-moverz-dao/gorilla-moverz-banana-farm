@@ -3,8 +3,8 @@ name = "Gorilla Moverz Banana Farm"
 version = "0.0.1"
 
 [addresses]
-GorillaMoverz = "8256914013a64dc4e17a4113095ad8e6971f79ffcd78a442f4fd2005394dd52a"
-initial_creator_addr = "8256914013a64dc4e17a4113095ad8e6971f79ffcd78a442f4fd2005394dd52a"
+GorillaMoverz = "8008ff07bcb3f2c8848ffd7db1688b7ca08ecc90d63bac7ae76799704b2fc212"
+initial_creator_addr = "8008ff07bcb3f2c8848ffd7db1688b7ca08ecc90d63bac7ae76799704b2fc212"
 minter = "0x8256914013a64dc4e17a4113095ad8e6971f79ffcd78a442f4fd2005394dd52a"
 
 [dependencies]

@@ -51,7 +51,7 @@ export function useFarmOwnedNFTs() {
         if (!address) return null;
 
         let collectionIds = collections?.map((collection) => collection.collection_address) ?? [];
-        const verifiedCollectionIds = verifiedCollections?.map((collection) => collection[0]) ?? [];
+        const verifiedCollectionIds = verifiedCollections ?? [];
 
         if (verifiedCollectionIds.length > 0) {
           collectionIds = [...collectionIds, ...verifiedCollectionIds];
