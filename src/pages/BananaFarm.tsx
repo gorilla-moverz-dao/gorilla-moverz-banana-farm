@@ -38,6 +38,7 @@ function BananaFarm() {
     { id: "farm", name: "Banana farm" },
     { id: "partner", name: "Partner NFTs" },
     { id: "leaderboard", name: "Leaderboard" },
+    { id: "gameplay", name: "Gameplay" },
   ];
 
   if (address === "0x" + MODULE_ADDRESS) {
