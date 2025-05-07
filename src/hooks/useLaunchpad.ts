@@ -15,12 +15,12 @@ const useLaunchpad = () => {
   };
 
   async function getStartAndEndTime(collection_id: `0x${string}`) {
-    const mintStageRes = await launchpadClient.view.get_active_or_next_mint_stage({
+    const [mintStageRes] = await launchpadClient.view.get_active_or_next_mint_stage({
       typeArguments: [],
       functionArguments: [collection_id],
     });
 
-    const mintStage = mintStageRes[0].vec[0];
+    const mintStage = mintStageRes.vec[0];
 
     const startAndEndRes = await launchpadClient.view.get_mint_stage_start_and_end_time({
       typeArguments: [],

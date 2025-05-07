@@ -19,28 +19,28 @@ const useBananaFarm = () => {
   };
 
   const getTreasuryTimeout = async () => {
-    const response = await bananaFarmClient.view.get_treasury_timeout({
+    const [response] = await bananaFarmClient.view.get_treasury_timeout({
       typeArguments: [],
       functionArguments: [],
     });
-    return parseInt(response[0]);
+    return parseInt(response);
   };
 
   const getCollectionAddress = async () => {
-    const response = await bananaFarmClient.view.collection_address({
+    const [response] = await bananaFarmClient.view.collection_address({
       typeArguments: [],
       functionArguments: [],
     });
 
-    return response[0];
+    return response;
   };
 
   const getLastFarmed = async () => {
-    const response = await bananaFarmClient.view.last_farmed({
+    const [response] = await bananaFarmClient.view.last_farmed({
       typeArguments: [],
       functionArguments: [address!],
     });
-    return response[0];
+    return response;
   };
 
   return {

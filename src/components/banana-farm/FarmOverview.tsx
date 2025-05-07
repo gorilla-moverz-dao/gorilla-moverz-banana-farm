@@ -163,7 +163,6 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                                         icon={<FaLink />}
                                         aria-label="View on explorer"
                                         variant="ghost"
-                                        alignSelf="flex-start"
                                       />
                                     </Link>
                                     <Text fontFamily="monospace" fontSize="sm">

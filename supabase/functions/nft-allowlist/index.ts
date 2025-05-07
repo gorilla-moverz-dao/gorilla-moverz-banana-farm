@@ -64,6 +64,7 @@ async function home(request: Request) {
       },
       body: JSON.stringify({
         content,
+        flags: 64,
       }),
     });
 

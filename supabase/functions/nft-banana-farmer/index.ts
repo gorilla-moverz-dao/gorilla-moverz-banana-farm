@@ -43,12 +43,15 @@ async function nft(req: Request, _connInfo: ConnInfo, params: PathParams) {
     return new Response("Not found", { status: 404 });
   }
 
-  console.log(data);
+  const imageUrl = `https://farm.gorilla-moverz.xyz/nfts/${slug}/images/${data.image}`;
+
+  // Redirect to the image URL
+  return Response.redirect(imageUrl, 302);
 
   const nft: BananaFarmerNFTMetadata = {
     name: `${data.banana_farm_collections.name} | #${data.nft_number}`,
     description: `${data.banana_farm_collections.name} | #${data.nft_number}`,
-    image: `https://farm.gorilla-moverz.xyz/nfts/${slug}/images/${data.image}`,
+    image: imageUrl,
     attributes: [],
     external_url: `https://farm.gorilla-moverz.xyz`,
   };
