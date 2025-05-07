@@ -35,6 +35,16 @@ function FarmGameplay() {
             </ListItem>
             <ListItem>The leaderboard is based on the amount of bananas a wallet owns</ListItem>
             <ListItem>You can also mint partner NFTs to get more bananas (boost) each time you farm.</ListItem>
+            <ListItem>
+              If you have issues, please check our Discord{" "}
+              <Link
+                href="https://discord.gg/UBGRUYcG6A"
+                isExternal
+                style={{ color: "lightgreen", textDecoration: "underline" }}
+              >
+                here
+              </Link>
+            </ListItem>
           </UnorderedList>
 
           <NavLink to="/farm">
