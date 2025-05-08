@@ -27,14 +27,14 @@ function Layout() {
   return (
     <>
       <Helmet>
-        <title>Gorilla Moverz</title>
+        <title>Banana Farm | Gorilla Moverz</title>
         <meta
           name="description"
-          content="Gorilla Moverz: The Social Infrastructure project on Movement. We stimulate activity, promote initiatives, and support Movement testnet. Join our community shaping crypto's future. Apes together strong! 🦍🍌"
+          content="Banana Farm: The Social Infrastructure project on Movement. We stimulate activity, promote initiatives, and support Movement testnet. Join our community shaping crypto's future. Apes together strong! 🦍🍌"
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.gorilla-moverz.xyz/" />
-        <meta property="og:title" content="Gorilla Moverz" />
+        <meta property="og:url" content="https://farm.gorilla-moverz.xyz/" />
+        <meta property="og:title" content="Banana Farm | Gorilla Moverz" />
         <meta
           property="og:description"
           content="Gorilla Moverz: The Social Infrastructure project on Movement. We stimulate activity, promote initiatives, and support testnets. Join our community shaping crypto's future. Apes together strong! 🦍🍌"

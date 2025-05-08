@@ -1,4 +1,5 @@
 import {
+  aptosClient,
   aptosReadOnlyClient,
   bananaFarmABI,
   bananaFarmViewClient,
@@ -16,7 +17,7 @@ const useMovement = () => {
   const signAndAwaitTransaction = async (data: InputGenerateTransactionPayloadData) => {
     const response = await signAndSubmitTransaction({ payload: data });
     if (response.status === "Approved") {
-      const transaction = await aptosReadOnlyClient.waitForTransaction({ transactionHash: response.args.hash });
+      const transaction = await aptosClient.waitForTransaction({ transactionHash: response.args.hash });
       return transaction as UserTransactionResponse;
     } else {
       console.log("Transaction rejected: ", response);
