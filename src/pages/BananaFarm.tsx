@@ -9,7 +9,6 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Stack,
@@ -63,7 +62,7 @@ function BananaFarm() {
             <Box zIndex={-1} position="absolute" top={0} left={0} right={0} bottom={0} overflow={"hidden"} rounded={8}>
               <FarmParallax />
             </Box>
-            <Flex flexDir="column" minHeight={{ base: "100%", md: 700 }} paddingTop={4}>
+            <Flex flexDir="column" minHeight={{ base: "100%", md: 740 }} paddingTop={4}>
               <Flex alignSelf="end" display={{ base: "none", md: "flex" }}>
                 <HStack>
                   {navigationItems.map((tab) => (
@@ -137,8 +136,6 @@ function BananaFarm() {
               </Flex>
             </Flex>
           </ModalBody>
-
-          <ModalFooter display={{ base: "none", md: "block" }}></ModalFooter>
         </ModalContent>
       </Modal>
 

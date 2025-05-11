@@ -39,7 +39,7 @@ function Layout() {
           property="og:description"
           content="Gorilla Moverz: The Social Infrastructure project on Movement. We stimulate activity, promote initiatives, and support testnets. Join our community shaping crypto's future. Apes together strong! 🦍🍌"
         />
-        <meta property="og:image" content="https://www.gorilla-moverz.xyz/images/favicon.png" />
+        <meta property="og:image" content="https://farm.gorilla-moverz.xyz/images/banana.png" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
       {isMobile && (

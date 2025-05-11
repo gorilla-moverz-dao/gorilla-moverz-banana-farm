@@ -140,6 +140,15 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                                 <summary style={{ cursor: "pointer", marginBottom: "8px" }}>NFTs</summary>
                                 {partnerNFTIds.map((id) => (
                                   <Flex key={id} gap={3} paddingY={1} alignItems="center">
+                                    <img
+                                      src={
+                                        ownedNFTs?.find((nft) => nft.current_token_data?.token_data_id === id)
+                                          ?.current_token_data?.token_uri
+                                      }
+                                      alt={collection.name}
+                                      width={100}
+                                      height={100}
+                                    />
                                     <Link
                                       href={`https://explorer.movementnetwork.xyz/token/${id}?network=${NETWORK_NAME}`}
                                       isExternal
