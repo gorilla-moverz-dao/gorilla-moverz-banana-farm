@@ -122,7 +122,9 @@ async function blockMultipleEntries(guild_id: string, column: "discord_user_id" 
   }
   if (data) {
     throw new Error(
-      column === "discord_user_id" ? "User already submitted a wallet address" : "Wallet address already submitted",
+      column === "discord_user_id"
+        ? "User already submitted a wallet address: " + data.wallet_address
+        : "Wallet address already submitted: " + data.wallet_address,
     );
   }
 }
