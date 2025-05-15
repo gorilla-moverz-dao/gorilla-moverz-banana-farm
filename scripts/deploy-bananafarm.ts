@@ -1,26 +1,16 @@
 import { getSigner } from "./aptos-helper";
 import { bananaClient, bananaFarmClient, launchpadClient } from "../src/services/movement-client";
-import { convertToAmount, dateToSeconds, runCommand } from "./helper";
+import { convertToAmount, dateToSeconds } from "./helper";
 import { Account, UserTransactionResponse } from "@aptos-labs/ts-sdk";
 
 const moveDir = "move/";
 const aptosYml = moveDir + ".aptos/config.yaml";
 const mint_amount = 10_000_000_000;
 const deposit_amount = 9_000_000_000;
-const publish = false;
 
 const admin = getSigner(aptosYml);
 
 async function main() {
-  // Run the command
-  if (publish) {
-    console.log("Test move code:");
-    await runCommand("aptos move test", moveDir);
-
-    console.log("Deploy move code:");
-    await runCommand("aptos move publish --assume-yes", moveDir);
-  }
-
   await mintFACoin("banana", admin, admin, mint_amount);
 
   await deposit(admin, deposit_amount);

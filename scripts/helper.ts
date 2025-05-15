@@ -1,23 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { exec } from "child_process";
 import * as yaml from "js-yaml";
 import * as fs from "fs";
-
-// Function to run a command in a specific directory
-export function runCommand(command: string, directory: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    exec(command, { cwd: directory }, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      }
-      if (stderr) {
-        reject(stderr);
-      }
-      console.log(`Stdout: ${stdout}`);
-      resolve();
-    });
-  });
-}
 
 export function parsePrivateKey(filePath: string): string | undefined {
   try {
