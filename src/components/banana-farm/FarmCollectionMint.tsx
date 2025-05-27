@@ -38,12 +38,10 @@ function FarmCollectionMint({ collectionId }: Props) {
   const [minting, setMinting] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const discordText =
-    /*col?.discord_help ??*/
-    `Use the banana farm bot to add your address to allowlist using this command:\n\n**/bananafarm-allowlist address: [address]**\n\nThen you can mint.\n\nIf you have any issues, ask in discord.`.replace(
-      "[address]",
-      address ?? "[your address]",
-    );
+  const discordText = (
+    col?.discord_help ??
+    `Use the banana farm bot to add your address to allowlist using this command:\n\n**/bananafarm-allowlist address: [address]**\n\nThen you can mint.\n\nIf you have any issues, ask in discord.`
+  ).replace("[address]", address ?? "[your address]");
 
   const { collection, totalMinted = 0, maxSupply = 1 } = data ?? {};
 

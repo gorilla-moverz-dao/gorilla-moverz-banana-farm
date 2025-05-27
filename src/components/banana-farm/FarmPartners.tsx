@@ -28,7 +28,7 @@ function FarmPartners() {
               <CardBody>
                 <Image src={`/nfts/${collection.slug}/collection.png`}></Image>
                 <Stack mt="6" spacing="3">
-                  <Heading size="md" color="green.600">
+                  <Heading size="md" color="green.300">
                     {collection.name}
                   </Heading>
                 </Stack>
