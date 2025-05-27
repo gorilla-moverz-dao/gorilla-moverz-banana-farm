@@ -14,4 +14,4 @@ export const EXCLUDE_LEADERBOARD = [
   "0x" + MODULE_ADDRESS,
   "0x97e0e2b6f91f82741adfae7ed370a5dd5533fbbb4cfd67383f1df1a8db2d3a42",
 ];
-export const SUPPORTED_WALLETS = ["Nightly", "Razor Wallet" /*, "Leap Wallet"*/];
+export const SUPPORTED_WALLETS = ["Nightly", "Razor Wallet", "Leap Wallet"];
