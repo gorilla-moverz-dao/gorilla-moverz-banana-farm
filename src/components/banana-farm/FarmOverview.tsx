@@ -11,6 +11,7 @@ import useFarmCollection from "./useFarmCollection";
 import BoxBlurred from "../BoxBlurred";
 import useBananaFarm from "../../hooks/useBananaFarm";
 import { NETWORK_NAME } from "../../constants";
+import { useOwnedPartnerNFTs } from "./usePartnerNFTs";
 
 interface Props {
   collectionId: `0x${string}`;
@@ -19,6 +20,7 @@ interface Props {
 
 function FarmerOverview({ collectionId, enableFarming }: Props) {
   const { data: ownedNFTs, isLoading } = useFarmOwnedNFTs();
+  const { ownedPartnerNFTs, ownedPartnerNFTIds } = useOwnedPartnerNFTs(collectionId);
   const farmerNFT = ownedNFTs?.find((nft) => nft.current_token_data?.collection_id === collectionId);
 
   const { address, farm } = useBananaFarm();
@@ -67,24 +69,6 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
 
   if (!ownedNFTs) return <Spinner />;
 
-  const partnerNFTIds = ownedNFTs
-    ?.filter((nft) => nft.current_token_data?.collection_id !== collectionId)
-    .reduce((acc: `0x${string}`[], nft) => {
-      const collectionId = nft.current_token_data?.collection_id;
-      const tokenId = nft.current_token_data?.token_data_id as `0x${string}`;
-      if (
-        collectionId &&
-        !acc.some(
-          (id) =>
-            ownedNFTs?.find((n) => n.current_token_data?.token_data_id === id)?.current_token_data?.collection_id ===
-            collectionId,
-        )
-      ) {
-        acc.push(tokenId);
-      }
-      return acc;
-    }, []);
-
   return (
     <>
       {farmerNFT && (
@@ -116,7 +100,7 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                         <FarmCountdown
                           seconds={farmed_data.remainingTime > 0 ? farmed_data.remainingTime : 0}
                           onActivate={() =>
-                            farmNFT(farmerNFT.current_token_data?.token_data_id as `0x${string}`, partnerNFTIds)
+                            farmNFT(farmerNFT.current_token_data?.token_data_id as `0x${string}`, ownedPartnerNFTIds)
                           }
                           loading={farming}
                         />
@@ -129,22 +113,19 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                           </i>
                         </Text>
 
-                        {partnerNFTIds.length > 0 && (
+                        {ownedPartnerNFTIds.length > 0 && (
                           <>
-                            <Text>You have {partnerNFTIds.length} NFTs that will boost your farm. </Text>
+                            <Text>You have {ownedPartnerNFTIds.length} NFTs that will boost your farm. </Text>
                             <Box paddingTop={2}>
                               <Flex gap={3} flexWrap="wrap">
-                                {partnerNFTIds.map((id) => (
+                                {ownedPartnerNFTs.map((nft) => (
                                   <Link
-                                    key={id}
-                                    href={`https://explorer.movementnetwork.xyz/token/${id}?network=${NETWORK_NAME}`}
+                                    key={nft.current_token_data?.token_data_id}
+                                    href={`https://explorer.movementnetwork.xyz/token/${nft.current_token_data?.token_data_id}?network=${NETWORK_NAME}`}
                                     isExternal
                                   >
                                     <img
-                                      src={
-                                        ownedNFTs?.find((nft) => nft.current_token_data?.token_data_id === id)
-                                          ?.current_token_data?.token_uri
-                                      }
+                                      src={nft.current_token_data?.token_uri}
                                       alt={collection.name}
                                       width={120}
                                       height={120}
