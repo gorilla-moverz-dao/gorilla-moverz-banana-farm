@@ -133,29 +133,26 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                           <>
                             <Text>You have {partnerNFTIds.length} NFTs that will boost your farm. </Text>
                             <Box paddingTop={2}>
-                              <details>
-                                <summary style={{ cursor: "pointer", marginBottom: "8px" }}>NFTs</summary>
-                                <Flex gap={3} flexWrap="wrap">
-                                  {partnerNFTIds.map((id) => (
-                                    <Link
-                                      key={id}
-                                      href={`https://explorer.movementnetwork.xyz/token/${id}?network=${NETWORK_NAME}`}
-                                      isExternal
-                                    >
-                                      <img
-                                        src={
-                                          ownedNFTs?.find((nft) => nft.current_token_data?.token_data_id === id)
-                                            ?.current_token_data?.token_uri
-                                        }
-                                        alt={collection.name}
-                                        width={120}
-                                        height={120}
-                                        style={{ borderRadius: "8px", cursor: "pointer" }}
-                                      />
-                                    </Link>
-                                  ))}
-                                </Flex>
-                              </details>
+                              <Flex gap={3} flexWrap="wrap">
+                                {partnerNFTIds.map((id) => (
+                                  <Link
+                                    key={id}
+                                    href={`https://explorer.movementnetwork.xyz/token/${id}?network=${NETWORK_NAME}`}
+                                    isExternal
+                                  >
+                                    <img
+                                      src={
+                                        ownedNFTs?.find((nft) => nft.current_token_data?.token_data_id === id)
+                                          ?.current_token_data?.token_uri
+                                      }
+                                      alt={collection.name}
+                                      width={120}
+                                      height={120}
+                                      style={{ borderRadius: "8px", cursor: "pointer" }}
+                                    />
+                                  </Link>
+                                ))}
+                              </Flex>
                             </Box>
                           </>
                         )}
