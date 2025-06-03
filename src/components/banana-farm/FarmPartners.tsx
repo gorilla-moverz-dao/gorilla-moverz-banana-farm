@@ -65,24 +65,30 @@ function FarmPartners() {
     })),
   ];
 
+  console.log(allCollections);
+
   return (
     <div>
       <SimpleGrid spacing={4} columns={{ base: 1, sm: 2, md: 4, lg: 4 }}>
         {allCollections?.map((collection) => {
           const cardContent = (
-            <Card key={collection.id} className="gorillaz-card" height="100%">
-              <CardBody>
+            <Card key={collection.id} className="gorillaz-card" height="270px">
+              <CardBody p={3}>
                 <Box position="relative">
                   <Image
                     src={
                       collection.isVerified
-                        ? collection.uri || "/placeholder-collection.png"
+                        ? collection.uri?.replace("ipfs://", "https://ipfs.io/ipfs/") || "/placeholder-collection.png"
                         : `/nfts/${collection.slug}/collection.png`
                     }
                     fallbackSrc="/placeholder-collection.png"
+                    height="200px"
+                    width="100%"
+                    objectFit="cover"
+                    borderRadius="8px"
                   />
                 </Box>
-                <Stack mt="6" spacing="3">
+                <Stack mt="4" spacing="3">
                   <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
                     <Heading size="md" color="green.300" noOfLines={1} flex="1" mr={2}>
                       {collection.name}
@@ -91,7 +97,7 @@ function FarmPartners() {
                       <Box flexShrink={0}>
                         <FaCheckCircle
                           color="green"
-                          size={24}
+                          size={22}
                           style={{
                             backgroundColor: "white",
                             borderRadius: "50%",

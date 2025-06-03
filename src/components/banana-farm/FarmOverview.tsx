@@ -125,7 +125,10 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                                     isExternal
                                   >
                                     <img
-                                      src={nft.current_token_data?.token_uri}
+                                      src={nft.current_token_data?.token_uri.replace(
+                                        "ipfs://",
+                                        "https://ipfs.io/ipfs/",
+                                      )}
                                       alt={collection.name}
                                       width={120}
                                       height={120}
