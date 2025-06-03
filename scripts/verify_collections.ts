@@ -18,8 +18,8 @@ async function main() {
 
   const collectionsToVerify = [
     {
-      name: "Movement Commemorative NFT",
-      address: "0xf2fd6807b62db99d202abd3151d754179627c51914d1b46297779e4ddfd1a437" as `0x${string}`,
+      name: "Gorilla Moverz Community Collection",
+      address: "0x625f987cf0e5529997f1602b53ef8ad99dd8ec3b5f8dfffa31ccf4848bfe119b" as `0x${string}`,
     },
   ];
 

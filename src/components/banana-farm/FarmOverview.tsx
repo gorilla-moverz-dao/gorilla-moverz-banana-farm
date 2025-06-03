@@ -1,5 +1,5 @@
 import { useFarmOwnedNFTs } from "./useFarmOwnedNFTs";
-import { Box, Flex, Image, Link, Spinner, Text, useToast, IconButton } from "@chakra-ui/react";
+import { Box, Flex, Image, Link, Spinner, Text, useToast } from "@chakra-ui/react";
 import PageTitle from "../PageTitle";
 import FarmCollectionMint from "./FarmCollectionMint";
 import { useState } from "react";
@@ -11,8 +11,6 @@ import useFarmCollection from "./useFarmCollection";
 import BoxBlurred from "../BoxBlurred";
 import useBananaFarm from "../../hooks/useBananaFarm";
 import { NETWORK_NAME } from "../../constants";
-import { FaLink } from "react-icons/fa6";
-import useMovement from "../../hooks/useMovement";
 
 interface Props {
   collectionId: `0x${string}`;
@@ -22,7 +20,6 @@ interface Props {
 function FarmerOverview({ collectionId, enableFarming }: Props) {
   const { data: ownedNFTs, isLoading } = useFarmOwnedNFTs();
   const farmerNFT = ownedNFTs?.find((nft) => nft.current_token_data?.collection_id === collectionId);
-  const { truncateAddress } = useMovement();
 
   const { address, farm } = useBananaFarm();
   const { refetch: refetchAssets } = useAssets();
@@ -138,33 +135,26 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                             <Box paddingTop={2}>
                               <details>
                                 <summary style={{ cursor: "pointer", marginBottom: "8px" }}>NFTs</summary>
-                                {partnerNFTIds.map((id) => (
-                                  <Flex key={id} gap={3} paddingY={1} alignItems="center">
-                                    <img
-                                      src={
-                                        ownedNFTs?.find((nft) => nft.current_token_data?.token_data_id === id)
-                                          ?.current_token_data?.token_uri
-                                      }
-                                      alt={collection.name}
-                                      width={100}
-                                      height={100}
-                                    />
+                                <Flex gap={3} flexWrap="wrap">
+                                  {partnerNFTIds.map((id) => (
                                     <Link
+                                      key={id}
                                       href={`https://explorer.movementnetwork.xyz/token/${id}?network=${NETWORK_NAME}`}
                                       isExternal
                                     >
-                                      <IconButton
-                                        size="sm"
-                                        icon={<FaLink />}
-                                        aria-label="View on explorer"
-                                        variant="ghost"
+                                      <img
+                                        src={
+                                          ownedNFTs?.find((nft) => nft.current_token_data?.token_data_id === id)
+                                            ?.current_token_data?.token_uri
+                                        }
+                                        alt={collection.name}
+                                        width={120}
+                                        height={120}
+                                        style={{ borderRadius: "8px", cursor: "pointer" }}
                                       />
                                     </Link>
-                                    <Text fontFamily="monospace" fontSize="sm">
-                                      {truncateAddress(id)}
-                                    </Text>
-                                  </Flex>
-                                ))}
+                                  ))}
+                                </Flex>
                               </details>
                             </Box>
                           </>
