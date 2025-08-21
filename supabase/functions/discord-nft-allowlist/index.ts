@@ -80,7 +80,7 @@ async function home(request: Request) {
       // Forward request for delayed update of message because response needs to be sent within 3 secs
       const url =
         Deno.env.get("SUPABASE_URL") +
-        `/functions/v1/nft-allowlist?collectionId=${collection.collection_address}&address=${address}`;
+        `/functions/v1/nft-allowlist?collectionId=${collection.collection_address}&address=${address}&forceDenoVersion=1`;
       fetch(url, {
         method: "POST",
         headers: {

@@ -14,7 +14,7 @@ export function useFarmLeaderboard() {
     refetchInterval: 1000 * 60 * 5,
     queryFn: async () => {
       try {
-        const res = await supabase.functions.invoke<LeaderboardEntry[]>("banana-farm-leaderboard");
+        const res = await supabase.functions.invoke<LeaderboardEntry[]>("banana-farm-leaderboard?forceDenoVersion=1");
         return res.data;
       } catch (error) {
         console.error(error);
