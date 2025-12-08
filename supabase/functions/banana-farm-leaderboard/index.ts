@@ -1,4 +1,3 @@
-import { aptos } from "../_shared/aptos-client.ts";
 import { supabaseClient } from "../_shared/supabase-client.ts";
 import { corsHeaders } from "../_shared/webserver-functions.ts";
 import { json, serve } from "https://deno.land/x/sift@0.6.0/mod.ts";
@@ -13,6 +12,7 @@ export const EXCLUDE_LEADERBOARD = [
   "0x" + MODULE_ADDRESS,
   "0x97e0e2b6f91f82741adfae7ed370a5dd5533fbbb4cfd67383f1df1a8db2d3a42",
 ];
+const INDEXER_URL = "https://indexer.mainnet.movementnetwork.xyz/v1/graphql";
 
 interface LeaderboardEntry {
   asset_type: string;
@@ -21,15 +21,25 @@ interface LeaderboardEntry {
   discord_user_name?: string;
 }
 
+interface GraphQLResponse {
+  data: {
+    current_fungible_asset_balances: LeaderboardEntry[];
+  };
+}
+
 async function leaderboard(req: Request) {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  const response = (
-    await aptos.queryIndexer<{ current_fungible_asset_balances: LeaderboardEntry[] }>({
-      query: {
-        query: `
+  // Use Deno's native fetch for Deno 2 compatibility instead of the Aptos SDK
+  const graphqlResponse = await fetch(INDEXER_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: `
 query GetLeaderboard($asset_type: String, $exclude: [String!]) {
   current_fungible_asset_balances(
     where: { asset_type: { _eq: $asset_type }, _and: { owner_address: { _nin: $exclude } } }
@@ -41,13 +51,36 @@ query GetLeaderboard($asset_type: String, $exclude: [String!]) {
       amount
         }
       }`,
-        variables: {
-          asset_type: BANANA_CONTRACT_ADDRESS,
-          exclude: EXCLUDE_LEADERBOARD,
-        },
+      variables: {
+        asset_type: BANANA_CONTRACT_ADDRESS,
+        exclude: EXCLUDE_LEADERBOARD,
       },
-    })
-  ).current_fungible_asset_balances;
+    }),
+  });
+
+  if (!graphqlResponse.ok) {
+    return json(
+      { error: `GraphQL request failed: ${graphqlResponse.statusText}` },
+      {
+        headers: corsHeaders,
+        status: 500,
+      },
+    );
+  }
+
+  const graphqlData: GraphQLResponse = await graphqlResponse.json();
+
+  if (graphqlData.data?.current_fungible_asset_balances === undefined) {
+    return json(
+      { error: "Invalid GraphQL response", data: graphqlData },
+      {
+        headers: corsHeaders,
+        status: 500,
+      },
+    );
+  }
+
+  const response = graphqlData.data.current_fungible_asset_balances;
 
   const addresses = response.map((item) => item.owner_address);
 

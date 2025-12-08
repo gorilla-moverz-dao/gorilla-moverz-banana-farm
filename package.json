@@ -14,7 +14,7 @@
     "resize-images": "tsx ./scripts/resize-images.ts",
     "generate:database-types": "supabase gen types --lang=typescript --local > src/database.types.ts && supabase gen types --lang=typescript --local > supabase/functions/_shared/database.types.ts",
     "generate:graphql-types": "graphql-codegen --config codegen.ts",
-    "dev:supabase": "supabase functions serve --env-file ./supabase/.env.local"
+    "dev:supabase": "supabase functions serve --no-verify-jwt --env-file ./supabase/.env.local"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "1.37.1",
@@ -64,7 +64,7 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "js-yaml": "^4.1.0",
     "prettier": "3.3.3",
-    "supabase": "^1.190.0",
+    "supabase": "^2.34.3",
     "tsx": "^4.17.0",
     "typescript": "^5.6.2",
     "vite": "^5.2.0"
