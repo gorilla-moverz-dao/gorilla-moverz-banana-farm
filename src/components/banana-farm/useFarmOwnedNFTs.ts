@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import useMovement from "../../hooks/useMovement";
-import useFarmCollections from "./useFarmCollections";
 import { graphql } from "../../gql";
 import useFarmVerifiedCollections from "./useFarmVerifiedCollections";
+import { api } from "../../../convex/_generated/api";
+import { useQuery as useConvexQuery } from "convex/react";
 
 const query = graphql(`
   query GetAccountNfts($address: String, $collectionIds: [String!]) {
@@ -40,7 +41,8 @@ const query = graphql(`
 
 export function useFarmOwnedNFTs() {
   const { address, graphqlRequest, indexerUrl } = useMovement();
-  const { data: collections, isLoading: isCollectionsLoading } = useFarmCollections();
+  const collections = useConvexQuery(api.collections.queryCollections);
+  const isCollectionsLoading = collections === undefined;
   const { data: verifiedCollections, isLoading: isVerifiedCollectionsLoading } = useFarmVerifiedCollections();
 
   return useQuery({

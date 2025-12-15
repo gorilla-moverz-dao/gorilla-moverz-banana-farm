@@ -12,6 +12,8 @@ import BoxBlurred from "../BoxBlurred";
 import useBananaFarm from "../../hooks/useBananaFarm";
 import { NETWORK_NAME } from "../../constants";
 import { useOwnedPartnerNFTs } from "./usePartnerNFTs";
+import { useAction } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 interface Props {
   collectionId: `0x${string}`;
@@ -22,6 +24,7 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
   const { data: ownedNFTs, isLoading } = useFarmOwnedNFTs();
   const { ownedPartnerNFTs, ownedPartnerNFTIds } = useOwnedPartnerNFTs(collectionId);
   const farmerNFT = ownedNFTs?.find((nft) => nft.current_token_data?.collection_id === collectionId);
+  const updateLeaderboard = useAction(api.farm.updateLeaderboard);
 
   const { address, farm } = useBananaFarm();
   const { refetch: refetchAssets } = useAssets();
@@ -36,6 +39,9 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
     try {
       setFarming(true);
       const amount = await farm(farmerNFT, partnerNFTs);
+      if (address) {
+        await updateLeaderboard({ wallet_address: address });
+      }
       refetchFarmed();
 
       toast({
@@ -104,6 +110,7 @@ function FarmerOverview({ collectionId, enableFarming }: Props) {
                           }
                           loading={farming}
                         />
+
                         <Text paddingTop={2}>
                           <i>
                             Last Farmed:&nbsp;

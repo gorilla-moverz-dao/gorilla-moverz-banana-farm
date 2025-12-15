@@ -8,13 +8,21 @@
  * @module
  */
 
+import type * as collections from "../collections.js";
+import type * as farm from "../farm.js";
+import type * as leaderboard from "../leaderboard.js";
+
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
 
-declare const fullApi: ApiFromModules<{}>;
+declare const fullApi: ApiFromModules<{
+  collections: typeof collections;
+  farm: typeof farm;
+  leaderboard: typeof leaderboard;
+}>;
 
 /**
  * A utility for referencing Convex functions in your app's public API.

@@ -1,14 +1,16 @@
 import { Link, useSearchParams } from "react-router-dom";
-import useFarmCollections from "./useFarmCollections";
+import { useQuery } from "convex/react";
 import FarmerOverview from "./FarmOverview";
 import { Card, CardBody, Heading, SimpleGrid, Stack, Image, Box, Spinner, Center } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useFarmOwnedNFTs } from "./useFarmOwnedNFTs";
 import { useVerifiedCollectionsDetails } from "./useVerifiedCollectionsDetails";
 import useFarmVerifiedCollections from "./useFarmVerifiedCollections";
+import { api } from "../../../convex/_generated/api";
 
 function FarmPartners() {
-  const { data, error, isLoading: isCollectionsLoading } = useFarmCollections();
+  const data = useQuery(api.collections.queryCollections);
+  const isCollectionsLoading = data === undefined;
   const collections = data?.filter((collection) => collection.slug !== "farmer");
   const [searchParams] = useSearchParams();
   const collectionId = searchParams.get("collectionId");
@@ -19,8 +21,6 @@ function FarmPartners() {
 
   // Wait for all data sources to be ready
   const isLoading = isCollectionsLoading || isVerifiedCollectionsLoading || isVerifiedDetailsLoading;
-
-  if (error) return null;
 
   if (collectionId) {
     return (
@@ -46,7 +46,7 @@ function FarmPartners() {
   // Combine regular collections and verified collections
   const allCollections = [
     ...(collections || []).map((collection) => ({
-      id: collection.id,
+      id: collection._id,
       name: collection.name,
       collection_address: collection.collection_address,
       slug: collection.slug,

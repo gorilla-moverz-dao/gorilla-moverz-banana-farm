@@ -9,15 +9,20 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WalletProvider } from "./services/WalletProvider";
 
 const queryClient = new QueryClient({});
+import { ConvexProvider, ConvexReactClient } from "convex/react";
+
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <WalletProvider>
-        <QueryClientProvider client={queryClient}>
-          <ColorModeScript initialColorMode={theme.config.initalColorMode} />
-          <RouterProvider router={router} />
-        </QueryClientProvider>
+        <ConvexProvider client={convex}>
+          <QueryClientProvider client={queryClient}>
+            <ColorModeScript initialColorMode={theme.config.initalColorMode} />
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </ConvexProvider>
       </WalletProvider>
     </ChakraProvider>
   </React.StrictMode>,

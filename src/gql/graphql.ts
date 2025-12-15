@@ -1,7 +1,7 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import type { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
+export type InputMaybe<T> = T | null | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -89,7 +89,7 @@ export type Account_Transactions = {
   coin_activities_aggregate: Coin_Activities_Aggregate;
   /** An array relationship */
   delegated_staking_activities: Array<Delegated_Staking_Activities>;
-  /** fetch data from the table: "fungible_asset_activities" */
+  /** An array relationship */
   fungible_asset_activities: Array<Fungible_Asset_Activities>;
   inserted_at: Scalars['timestamp']['output'];
   /** An array relationship */
@@ -2029,11 +2029,90 @@ export type Current_Ans_Lookup_V2_Stream_Cursor_Value_Input = {
   token_standard?: InputMaybe<Scalars['String']['input']>;
 };
 
+/** columns and relationships of "current_ans_primary_name_v2" */
+export type Current_Ans_Primary_Name_V2 = {
+  __typename?: 'current_ans_primary_name_v2';
+  domain?: Maybe<Scalars['String']['output']>;
+  inserted_at: Scalars['timestamp']['output'];
+  is_deleted: Scalars['Boolean']['output'];
+  last_transaction_version: Scalars['bigint']['output'];
+  registered_address: Scalars['String']['output'];
+  subdomain?: Maybe<Scalars['String']['output']>;
+  token_name?: Maybe<Scalars['String']['output']>;
+  token_standard: Scalars['String']['output'];
+};
+
+/** Boolean expression to filter rows from the table "current_ans_primary_name_v2". All fields are combined with a logical 'AND'. */
+export type Current_Ans_Primary_Name_V2_Bool_Exp = {
+  _and?: InputMaybe<Array<Current_Ans_Primary_Name_V2_Bool_Exp>>;
+  _not?: InputMaybe<Current_Ans_Primary_Name_V2_Bool_Exp>;
+  _or?: InputMaybe<Array<Current_Ans_Primary_Name_V2_Bool_Exp>>;
+  domain?: InputMaybe<String_Comparison_Exp>;
+  inserted_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  is_deleted?: InputMaybe<Boolean_Comparison_Exp>;
+  last_transaction_version?: InputMaybe<Bigint_Comparison_Exp>;
+  registered_address?: InputMaybe<String_Comparison_Exp>;
+  subdomain?: InputMaybe<String_Comparison_Exp>;
+  token_name?: InputMaybe<String_Comparison_Exp>;
+  token_standard?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "current_ans_primary_name_v2". */
+export type Current_Ans_Primary_Name_V2_Order_By = {
+  domain?: InputMaybe<Order_By>;
+  inserted_at?: InputMaybe<Order_By>;
+  is_deleted?: InputMaybe<Order_By>;
+  last_transaction_version?: InputMaybe<Order_By>;
+  registered_address?: InputMaybe<Order_By>;
+  subdomain?: InputMaybe<Order_By>;
+  token_name?: InputMaybe<Order_By>;
+  token_standard?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "current_ans_primary_name_v2" */
+export enum Current_Ans_Primary_Name_V2_Select_Column {
+  /** column name */
+  Domain = 'domain',
+  /** column name */
+  InsertedAt = 'inserted_at',
+  /** column name */
+  IsDeleted = 'is_deleted',
+  /** column name */
+  LastTransactionVersion = 'last_transaction_version',
+  /** column name */
+  RegisteredAddress = 'registered_address',
+  /** column name */
+  Subdomain = 'subdomain',
+  /** column name */
+  TokenName = 'token_name',
+  /** column name */
+  TokenStandard = 'token_standard'
+}
+
+/** Streaming cursor of the table "current_ans_primary_name_v2" */
+export type Current_Ans_Primary_Name_V2_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Current_Ans_Primary_Name_V2_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Current_Ans_Primary_Name_V2_Stream_Cursor_Value_Input = {
+  domain?: InputMaybe<Scalars['String']['input']>;
+  inserted_at?: InputMaybe<Scalars['timestamp']['input']>;
+  is_deleted?: InputMaybe<Scalars['Boolean']['input']>;
+  last_transaction_version?: InputMaybe<Scalars['bigint']['input']>;
+  registered_address?: InputMaybe<Scalars['String']['input']>;
+  subdomain?: InputMaybe<Scalars['String']['input']>;
+  token_name?: InputMaybe<Scalars['String']['input']>;
+  token_standard?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** columns and relationships of "current_aptos_names" */
 export type Current_Aptos_Names = {
   __typename?: 'current_aptos_names';
   domain?: Maybe<Scalars['String']['output']>;
-  domain_expiration_timestamp?: Maybe<Scalars['timestamp']['output']>;
   domain_with_suffix?: Maybe<Scalars['String']['output']>;
   expiration_timestamp?: Maybe<Scalars['timestamp']['output']>;
   is_active?: Maybe<Scalars['Boolean']['output']>;
@@ -2041,10 +2120,8 @@ export type Current_Aptos_Names = {
   is_domain_owner?: Maybe<Current_Aptos_Names>;
   is_primary?: Maybe<Scalars['Boolean']['output']>;
   last_transaction_version?: Maybe<Scalars['bigint']['output']>;
-  owner_address?: Maybe<Scalars['String']['output']>;
   registered_address?: Maybe<Scalars['String']['output']>;
   subdomain?: Maybe<Scalars['String']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['bigint']['output']>;
   token_name?: Maybe<Scalars['String']['output']>;
   token_standard?: Maybe<Scalars['String']['output']>;
 };
@@ -2125,13 +2202,11 @@ export type Current_Aptos_Names_Aggregate_Order_By = {
 export type Current_Aptos_Names_Avg_Fields = {
   __typename?: 'current_aptos_names_avg_fields';
   last_transaction_version?: Maybe<Scalars['Float']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by avg() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Avg_Order_By = {
   last_transaction_version?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "current_aptos_names". All fields are combined with a logical 'AND'. */
@@ -2140,17 +2215,14 @@ export type Current_Aptos_Names_Bool_Exp = {
   _not?: InputMaybe<Current_Aptos_Names_Bool_Exp>;
   _or?: InputMaybe<Array<Current_Aptos_Names_Bool_Exp>>;
   domain?: InputMaybe<String_Comparison_Exp>;
-  domain_expiration_timestamp?: InputMaybe<Timestamp_Comparison_Exp>;
   domain_with_suffix?: InputMaybe<String_Comparison_Exp>;
   expiration_timestamp?: InputMaybe<Timestamp_Comparison_Exp>;
   is_active?: InputMaybe<Boolean_Comparison_Exp>;
   is_domain_owner?: InputMaybe<Current_Aptos_Names_Bool_Exp>;
   is_primary?: InputMaybe<Boolean_Comparison_Exp>;
   last_transaction_version?: InputMaybe<Bigint_Comparison_Exp>;
-  owner_address?: InputMaybe<String_Comparison_Exp>;
   registered_address?: InputMaybe<String_Comparison_Exp>;
   subdomain?: InputMaybe<String_Comparison_Exp>;
-  subdomain_expiration_policy?: InputMaybe<Bigint_Comparison_Exp>;
   token_name?: InputMaybe<String_Comparison_Exp>;
   token_standard?: InputMaybe<String_Comparison_Exp>;
 };
@@ -2159,14 +2231,11 @@ export type Current_Aptos_Names_Bool_Exp = {
 export type Current_Aptos_Names_Max_Fields = {
   __typename?: 'current_aptos_names_max_fields';
   domain?: Maybe<Scalars['String']['output']>;
-  domain_expiration_timestamp?: Maybe<Scalars['timestamp']['output']>;
   domain_with_suffix?: Maybe<Scalars['String']['output']>;
   expiration_timestamp?: Maybe<Scalars['timestamp']['output']>;
   last_transaction_version?: Maybe<Scalars['bigint']['output']>;
-  owner_address?: Maybe<Scalars['String']['output']>;
   registered_address?: Maybe<Scalars['String']['output']>;
   subdomain?: Maybe<Scalars['String']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['bigint']['output']>;
   token_name?: Maybe<Scalars['String']['output']>;
   token_standard?: Maybe<Scalars['String']['output']>;
 };
@@ -2174,14 +2243,11 @@ export type Current_Aptos_Names_Max_Fields = {
 /** order by max() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Max_Order_By = {
   domain?: InputMaybe<Order_By>;
-  domain_expiration_timestamp?: InputMaybe<Order_By>;
   domain_with_suffix?: InputMaybe<Order_By>;
   expiration_timestamp?: InputMaybe<Order_By>;
   last_transaction_version?: InputMaybe<Order_By>;
-  owner_address?: InputMaybe<Order_By>;
   registered_address?: InputMaybe<Order_By>;
   subdomain?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
   token_name?: InputMaybe<Order_By>;
   token_standard?: InputMaybe<Order_By>;
 };
@@ -2190,14 +2256,11 @@ export type Current_Aptos_Names_Max_Order_By = {
 export type Current_Aptos_Names_Min_Fields = {
   __typename?: 'current_aptos_names_min_fields';
   domain?: Maybe<Scalars['String']['output']>;
-  domain_expiration_timestamp?: Maybe<Scalars['timestamp']['output']>;
   domain_with_suffix?: Maybe<Scalars['String']['output']>;
   expiration_timestamp?: Maybe<Scalars['timestamp']['output']>;
   last_transaction_version?: Maybe<Scalars['bigint']['output']>;
-  owner_address?: Maybe<Scalars['String']['output']>;
   registered_address?: Maybe<Scalars['String']['output']>;
   subdomain?: Maybe<Scalars['String']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['bigint']['output']>;
   token_name?: Maybe<Scalars['String']['output']>;
   token_standard?: Maybe<Scalars['String']['output']>;
 };
@@ -2205,14 +2268,11 @@ export type Current_Aptos_Names_Min_Fields = {
 /** order by min() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Min_Order_By = {
   domain?: InputMaybe<Order_By>;
-  domain_expiration_timestamp?: InputMaybe<Order_By>;
   domain_with_suffix?: InputMaybe<Order_By>;
   expiration_timestamp?: InputMaybe<Order_By>;
   last_transaction_version?: InputMaybe<Order_By>;
-  owner_address?: InputMaybe<Order_By>;
   registered_address?: InputMaybe<Order_By>;
   subdomain?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
   token_name?: InputMaybe<Order_By>;
   token_standard?: InputMaybe<Order_By>;
 };
@@ -2220,17 +2280,14 @@ export type Current_Aptos_Names_Min_Order_By = {
 /** Ordering options when selecting data from "current_aptos_names". */
 export type Current_Aptos_Names_Order_By = {
   domain?: InputMaybe<Order_By>;
-  domain_expiration_timestamp?: InputMaybe<Order_By>;
   domain_with_suffix?: InputMaybe<Order_By>;
   expiration_timestamp?: InputMaybe<Order_By>;
   is_active?: InputMaybe<Order_By>;
   is_domain_owner?: InputMaybe<Current_Aptos_Names_Order_By>;
   is_primary?: InputMaybe<Order_By>;
   last_transaction_version?: InputMaybe<Order_By>;
-  owner_address?: InputMaybe<Order_By>;
   registered_address?: InputMaybe<Order_By>;
   subdomain?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
   token_name?: InputMaybe<Order_By>;
   token_standard?: InputMaybe<Order_By>;
 };
@@ -2239,8 +2296,6 @@ export type Current_Aptos_Names_Order_By = {
 export enum Current_Aptos_Names_Select_Column {
   /** column name */
   Domain = 'domain',
-  /** column name */
-  DomainExpirationTimestamp = 'domain_expiration_timestamp',
   /** column name */
   DomainWithSuffix = 'domain_with_suffix',
   /** column name */
@@ -2252,13 +2307,9 @@ export enum Current_Aptos_Names_Select_Column {
   /** column name */
   LastTransactionVersion = 'last_transaction_version',
   /** column name */
-  OwnerAddress = 'owner_address',
-  /** column name */
   RegisteredAddress = 'registered_address',
   /** column name */
   Subdomain = 'subdomain',
-  /** column name */
-  SubdomainExpirationPolicy = 'subdomain_expiration_policy',
   /** column name */
   TokenName = 'token_name',
   /** column name */
@@ -2285,39 +2336,33 @@ export enum Current_Aptos_Names_Select_Column_Current_Aptos_Names_Aggregate_Bool
 export type Current_Aptos_Names_Stddev_Fields = {
   __typename?: 'current_aptos_names_stddev_fields';
   last_transaction_version?: Maybe<Scalars['Float']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Stddev_Order_By = {
   last_transaction_version?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_pop on columns */
 export type Current_Aptos_Names_Stddev_Pop_Fields = {
   __typename?: 'current_aptos_names_stddev_pop_fields';
   last_transaction_version?: Maybe<Scalars['Float']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev_pop() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Stddev_Pop_Order_By = {
   last_transaction_version?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
 export type Current_Aptos_Names_Stddev_Samp_Fields = {
   __typename?: 'current_aptos_names_stddev_samp_fields';
   last_transaction_version?: Maybe<Scalars['Float']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by stddev_samp() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Stddev_Samp_Order_By = {
   last_transaction_version?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
 };
 
 /** Streaming cursor of the table "current_aptos_names" */
@@ -2331,16 +2376,13 @@ export type Current_Aptos_Names_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Current_Aptos_Names_Stream_Cursor_Value_Input = {
   domain?: InputMaybe<Scalars['String']['input']>;
-  domain_expiration_timestamp?: InputMaybe<Scalars['timestamp']['input']>;
   domain_with_suffix?: InputMaybe<Scalars['String']['input']>;
   expiration_timestamp?: InputMaybe<Scalars['timestamp']['input']>;
   is_active?: InputMaybe<Scalars['Boolean']['input']>;
   is_primary?: InputMaybe<Scalars['Boolean']['input']>;
   last_transaction_version?: InputMaybe<Scalars['bigint']['input']>;
-  owner_address?: InputMaybe<Scalars['String']['input']>;
   registered_address?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
-  subdomain_expiration_policy?: InputMaybe<Scalars['bigint']['input']>;
   token_name?: InputMaybe<Scalars['String']['input']>;
   token_standard?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2349,52 +2391,44 @@ export type Current_Aptos_Names_Stream_Cursor_Value_Input = {
 export type Current_Aptos_Names_Sum_Fields = {
   __typename?: 'current_aptos_names_sum_fields';
   last_transaction_version?: Maybe<Scalars['bigint']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['bigint']['output']>;
 };
 
 /** order by sum() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Sum_Order_By = {
   last_transaction_version?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_pop on columns */
 export type Current_Aptos_Names_Var_Pop_Fields = {
   __typename?: 'current_aptos_names_var_pop_fields';
   last_transaction_version?: Maybe<Scalars['Float']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by var_pop() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Var_Pop_Order_By = {
   last_transaction_version?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
 };
 
 /** aggregate var_samp on columns */
 export type Current_Aptos_Names_Var_Samp_Fields = {
   __typename?: 'current_aptos_names_var_samp_fields';
   last_transaction_version?: Maybe<Scalars['Float']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by var_samp() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Var_Samp_Order_By = {
   last_transaction_version?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
 };
 
 /** aggregate variance on columns */
 export type Current_Aptos_Names_Variance_Fields = {
   __typename?: 'current_aptos_names_variance_fields';
   last_transaction_version?: Maybe<Scalars['Float']['output']>;
-  subdomain_expiration_policy?: Maybe<Scalars['Float']['output']>;
 };
 
 /** order by variance() on columns of table "current_aptos_names" */
 export type Current_Aptos_Names_Variance_Order_By = {
   last_transaction_version?: InputMaybe<Order_By>;
-  subdomain_expiration_policy?: InputMaybe<Order_By>;
 };
 
 /** columns and relationships of "current_coin_balances" */
@@ -6670,6 +6704,10 @@ export type Query_Root = {
   current_ans_lookup_v2: Array<Current_Ans_Lookup_V2>;
   /** fetch data from the table: "current_ans_lookup_v2" using primary key columns */
   current_ans_lookup_v2_by_pk?: Maybe<Current_Ans_Lookup_V2>;
+  /** fetch data from the table: "current_ans_primary_name_v2" */
+  current_ans_primary_name_v2: Array<Current_Ans_Primary_Name_V2>;
+  /** fetch data from the table: "current_ans_primary_name_v2" using primary key columns */
+  current_ans_primary_name_v2_by_pk?: Maybe<Current_Ans_Primary_Name_V2>;
   /** fetch data from the table: "current_aptos_names" */
   current_aptos_names: Array<Current_Aptos_Names>;
   /** fetch aggregated fields from the table: "current_aptos_names" */
@@ -6766,7 +6804,7 @@ export type Query_Root = {
   events: Array<Events>;
   /** fetch data from the table: "events" using primary key columns */
   events_by_pk?: Maybe<Events>;
-  /** fetch data from the table: "fungible_asset_activities" */
+  /** An array relationship */
   fungible_asset_activities: Array<Fungible_Asset_Activities>;
   /** fetch data from the table: "fungible_asset_activities" using primary key columns */
   fungible_asset_activities_by_pk?: Maybe<Fungible_Asset_Activities>;
@@ -7043,6 +7081,21 @@ export type Query_RootCurrent_Ans_Lookup_V2Args = {
 export type Query_RootCurrent_Ans_Lookup_V2_By_PkArgs = {
   domain: Scalars['String']['input'];
   subdomain: Scalars['String']['input'];
+  token_standard: Scalars['String']['input'];
+};
+
+
+export type Query_RootCurrent_Ans_Primary_Name_V2Args = {
+  distinct_on?: InputMaybe<Array<Current_Ans_Primary_Name_V2_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Current_Ans_Primary_Name_V2_Order_By>>;
+  where?: InputMaybe<Current_Ans_Primary_Name_V2_Bool_Exp>;
+};
+
+
+export type Query_RootCurrent_Ans_Primary_Name_V2_By_PkArgs = {
+  registered_address: Scalars['String']['input'];
   token_standard: Scalars['String']['input'];
 };
 
@@ -7909,6 +7962,12 @@ export type Subscription_Root = {
   current_ans_lookup_v2_by_pk?: Maybe<Current_Ans_Lookup_V2>;
   /** fetch data from the table in a streaming manner: "current_ans_lookup_v2" */
   current_ans_lookup_v2_stream: Array<Current_Ans_Lookup_V2>;
+  /** fetch data from the table: "current_ans_primary_name_v2" */
+  current_ans_primary_name_v2: Array<Current_Ans_Primary_Name_V2>;
+  /** fetch data from the table: "current_ans_primary_name_v2" using primary key columns */
+  current_ans_primary_name_v2_by_pk?: Maybe<Current_Ans_Primary_Name_V2>;
+  /** fetch data from the table in a streaming manner: "current_ans_primary_name_v2" */
+  current_ans_primary_name_v2_stream: Array<Current_Ans_Primary_Name_V2>;
   /** fetch data from the table: "current_aptos_names" */
   current_aptos_names: Array<Current_Aptos_Names>;
   /** fetch aggregated fields from the table: "current_aptos_names" */
@@ -8049,7 +8108,7 @@ export type Subscription_Root = {
   events_by_pk?: Maybe<Events>;
   /** fetch data from the table in a streaming manner: "events" */
   events_stream: Array<Events>;
-  /** fetch data from the table: "fungible_asset_activities" */
+  /** An array relationship */
   fungible_asset_activities: Array<Fungible_Asset_Activities>;
   /** fetch data from the table: "fungible_asset_activities" using primary key columns */
   fungible_asset_activities_by_pk?: Maybe<Fungible_Asset_Activities>;
@@ -8447,6 +8506,28 @@ export type Subscription_RootCurrent_Ans_Lookup_V2_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Current_Ans_Lookup_V2_Stream_Cursor_Input>>;
   where?: InputMaybe<Current_Ans_Lookup_V2_Bool_Exp>;
+};
+
+
+export type Subscription_RootCurrent_Ans_Primary_Name_V2Args = {
+  distinct_on?: InputMaybe<Array<Current_Ans_Primary_Name_V2_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Current_Ans_Primary_Name_V2_Order_By>>;
+  where?: InputMaybe<Current_Ans_Primary_Name_V2_Bool_Exp>;
+};
+
+
+export type Subscription_RootCurrent_Ans_Primary_Name_V2_By_PkArgs = {
+  registered_address: Scalars['String']['input'];
+  token_standard: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootCurrent_Ans_Primary_Name_V2_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Current_Ans_Primary_Name_V2_Stream_Cursor_Input>>;
+  where?: InputMaybe<Current_Ans_Primary_Name_V2_Bool_Exp>;
 };
 
 
@@ -11217,6 +11298,14 @@ export type User_Transactions_Variance_Fields = {
   version?: Maybe<Scalars['Float']['output']>;
 };
 
+export type GetLeaderboardQueryVariables = Exact<{
+  asset_type?: InputMaybe<Scalars['String']['input']>;
+  wallet_address: Scalars['String']['input'];
+}>;
+
+
+export type GetLeaderboardQuery = { __typename?: 'query_root', current_fungible_asset_balances: Array<{ __typename?: 'current_fungible_asset_balances', asset_type: string, owner_address: string, amount: any }> };
+
 export type GetAccountNftsQueryVariables = Exact<{
   address?: InputMaybe<Scalars['String']['input']>;
   collectionIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -11247,8 +11336,128 @@ export type GetNftQueryVariables = Exact<{
 
 export type GetNftQuery = { __typename?: 'query_root', current_token_ownerships_v2: Array<{ __typename?: 'current_token_ownerships_v2', owner_address: string, amount: any, current_token_data?: { __typename?: 'current_token_datas_v2', collection_id: string, largest_property_version_v1?: any | null, description: string, token_name: string, token_data_id: string, token_uri: string, token_properties: any, current_collection?: { __typename?: 'current_collections_v2', collection_id: string, collection_name: string, description: string, uri: string } | null } | null }> };
 
+export class TypedDocumentString<TResult, TVariables>
+  extends String
+  implements DocumentTypeDecoration<TResult, TVariables>
+{
+  __apiType?: NonNullable<DocumentTypeDecoration<TResult, TVariables>['__apiType']>;
+  private value: string;
+  public __meta__?: Record<string, any> | undefined;
 
-export const GetAccountNftsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAccountNfts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"current_token_ownerships_v2"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"owner_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"amount"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"StringValue","value":"0","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"current_token_data"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"current_collection"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionIds"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"current_token_data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collection_id"}},{"kind":"Field","name":{"kind":"Name","value":"largest_property_version_v1"}},{"kind":"Field","name":{"kind":"Name","value":"current_collection"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collection_id"}},{"kind":"Field","name":{"kind":"Name","value":"collection_name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"creator_address"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token_data_id"}},{"kind":"Field","name":{"kind":"Name","value":"token_standard"}},{"kind":"Field","name":{"kind":"Name","value":"token_uri"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}},{"kind":"Field","name":{"kind":"Name","value":"owner_address"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<GetAccountNftsQuery, GetAccountNftsQueryVariables>;
-export const GetCollectionDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCollectionDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionIds"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"current_collections_v2"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionIds"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collection_id"}},{"kind":"Field","name":{"kind":"Name","value":"collection_name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"creator_address"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"max_supply"}},{"kind":"Field","name":{"kind":"Name","value":"current_supply"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<GetCollectionDetailsQuery, GetCollectionDetailsQueryVariables>;
-export const GetTokenDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTokenData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collection_id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"current_collections_v2"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection_id"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"creator_address"}},{"kind":"Field","name":{"kind":"Name","value":"collection_id"}},{"kind":"Field","name":{"kind":"Name","value":"collection_name"}},{"kind":"Field","name":{"kind":"Name","value":"current_supply"}},{"kind":"Field","name":{"kind":"Name","value":"max_supply"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"current_collection_ownership_v2_view"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection_id"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"last_transaction_version"},"value":{"kind":"EnumValue","value":"desc"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"owner_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"current_collection_ownership_v2_view_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collection_id"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct"},"value":{"kind":"BooleanValue","value":true}},{"kind":"Argument","name":{"kind":"Name","value":"columns"},"value":{"kind":"EnumValue","value":"owner_address"}}]}]}}]}}]}}]} as unknown as DocumentNode<GetTokenDataQuery, GetTokenDataQueryVariables>;
-export const GetNftDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetNft"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"current_token_ownerships_v2"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"amount"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"StringValue","value":"0","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"current_token_data"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collection_id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionId"}}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"token_name"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"current_token_data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collection_id"}},{"kind":"Field","name":{"kind":"Name","value":"largest_property_version_v1"}},{"kind":"Field","name":{"kind":"Name","value":"current_collection"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collection_id"}},{"kind":"Field","name":{"kind":"Name","value":"collection_name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token_data_id"}},{"kind":"Field","name":{"kind":"Name","value":"token_uri"}},{"kind":"Field","name":{"kind":"Name","value":"token_properties"}}]}},{"kind":"Field","name":{"kind":"Name","value":"owner_address"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}}]}}]}}]} as unknown as DocumentNode<GetNftQuery, GetNftQueryVariables>;
+  constructor(value: string, __meta__?: Record<string, any> | undefined) {
+    super(value);
+    this.value = value;
+    this.__meta__ = __meta__;
+  }
+
+  override toString(): string & DocumentTypeDecoration<TResult, TVariables> {
+    return this.value;
+  }
+}
+
+export const GetLeaderboardDocument = new TypedDocumentString(`
+    query GetLeaderboard($asset_type: String, $wallet_address: String!) {
+  current_fungible_asset_balances(
+    where: {asset_type: {_eq: $asset_type}, _and: {owner_address: {_eq: $wallet_address}}}
+    order_by: {amount: desc}
+  ) {
+    asset_type
+    owner_address
+    amount
+  }
+}
+    `) as unknown as TypedDocumentString<GetLeaderboardQuery, GetLeaderboardQueryVariables>;
+export const GetAccountNftsDocument = new TypedDocumentString(`
+    query GetAccountNfts($address: String, $collectionIds: [String!]) {
+  current_token_ownerships_v2(
+    where: {owner_address: {_eq: $address}, amount: {_gt: "0"}, current_token_data: {current_collection: {collection_id: {_in: $collectionIds}}}}
+  ) {
+    current_token_data {
+      collection_id
+      largest_property_version_v1
+      current_collection {
+        collection_id
+        collection_name
+        description
+        creator_address
+        uri
+        __typename
+      }
+      description
+      token_name
+      token_data_id
+      token_standard
+      token_uri
+      __typename
+    }
+    owner_address
+    amount
+    __typename
+  }
+}
+    `) as unknown as TypedDocumentString<GetAccountNftsQuery, GetAccountNftsQueryVariables>;
+export const GetCollectionDetailsDocument = new TypedDocumentString(`
+    query GetCollectionDetails($collectionIds: [String!]) {
+  current_collections_v2(where: {collection_id: {_in: $collectionIds}}) {
+    collection_id
+    collection_name
+    description
+    creator_address
+    uri
+    max_supply
+    current_supply
+    __typename
+  }
+}
+    `) as unknown as TypedDocumentString<GetCollectionDetailsQuery, GetCollectionDetailsQueryVariables>;
+export const GetTokenDataDocument = new TypedDocumentString(`
+    query GetTokenData($collection_id: String) {
+  current_collections_v2(where: {collection_id: {_eq: $collection_id}}, limit: 1) {
+    creator_address
+    collection_id
+    collection_name
+    current_supply
+    max_supply
+    uri
+    description
+  }
+  current_collection_ownership_v2_view(
+    where: {collection_id: {_eq: $collection_id}}
+    order_by: {last_transaction_version: desc}
+  ) {
+    owner_address
+  }
+  current_collection_ownership_v2_view_aggregate(
+    where: {collection_id: {_eq: $collection_id}}
+  ) {
+    aggregate {
+      count(distinct: true, columns: owner_address)
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetTokenDataQuery, GetTokenDataQueryVariables>;
+export const GetNftDocument = new TypedDocumentString(`
+    query GetNft($id: String, $collectionId: String!) {
+  current_token_ownerships_v2(
+    where: {amount: {_gt: "0"}, current_token_data: {collection_id: {_eq: $collectionId}, token_name: {_eq: $id}}}
+  ) {
+    current_token_data {
+      collection_id
+      largest_property_version_v1
+      current_collection {
+        collection_id
+        collection_name
+        description
+        uri
+      }
+      description
+      token_name
+      token_data_id
+      token_uri
+      token_properties
+    }
+    owner_address
+    amount
+  }
+}
+    `) as unknown as TypedDocumentString<GetNftQuery, GetNftQueryVariables>;
