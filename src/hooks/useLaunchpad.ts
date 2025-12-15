@@ -1,14 +1,19 @@
 import useMovement from "./useMovement";
+import { useTransaction } from "./useTransaction";
 
 const useLaunchpad = () => {
-  const { address, signAndAwaitTransaction, createEntryPayload, launchpadABI, launchpadViewClient } = useMovement();
+  const { address, launchpadViewClient, launchpadClient } = useMovement();
+  const { executeTransaction } = useTransaction();
 
   const mintNFT = async (collectionId: `0x${string}`) => {
-    const response = await signAndAwaitTransaction(
-      createEntryPayload(launchpadABI, {
-        function: "mint_nft",
-        functionArguments: [collectionId, 1],
-        typeArguments: [],
+    if (!launchpadClient) {
+      throw new Error("Launchpad client not found");
+    }
+
+    const response = await executeTransaction(
+      launchpadClient.mint_nft({
+        arguments: [collectionId, 1],
+        type_arguments: [],
       }),
     );
     return response;

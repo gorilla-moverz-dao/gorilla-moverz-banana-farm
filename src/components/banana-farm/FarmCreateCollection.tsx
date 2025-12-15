@@ -6,6 +6,7 @@ import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Textarea 
 import { dateToSeconds } from "../../helpers/date-functions";
 import BoxBlurred from "../BoxBlurred";
 import useMovement from "../../hooks/useMovement";
+import { useTransaction } from "../../hooks/useTransaction";
 
 const CreateCollectionSchema = z.object({
   collectionName: z.string().min(1, { message: "Field is required" }),
@@ -18,7 +19,8 @@ const CreateCollectionSchema = z.object({
 type CreateCollection = z.infer<typeof CreateCollectionSchema>;
 
 function FarmCreateCollection() {
-  const { address, signAndAwaitTransaction, createEntryPayload, launchpadABI } = useMovement();
+  const { address, launchpadClient } = useMovement();
+  const { executeTransaction } = useTransaction();
   const {
     register,
     handleSubmit,
@@ -37,11 +39,13 @@ function FarmCreateCollection() {
       const preMintAmount = 0;
       const royaltyPercentage = 0;
 
-      const response = await signAndAwaitTransaction(
-        createEntryPayload(launchpadABI, {
-          function: `create_collection`,
-          typeArguments: [],
-          functionArguments: [
+      if (!launchpadClient) {
+        throw new Error("Launchpad client not found");
+      }
+
+      const response = await executeTransaction(
+        launchpadClient.create_collection({
+          arguments: [
             collection.collectionDescription,
             collection.collectionName,
             collection.projectUri,
@@ -59,9 +63,10 @@ function FarmCreateCollection() {
             mintLimitPerAccount, // mint limit per address in the public mint
             mintFeePerNFT,
           ],
+          type_arguments: [],
         }),
       );
-      if (response.success) {
+      if (response.result.success) {
         alert("Collection created successfully");
       }
     } catch (error) {

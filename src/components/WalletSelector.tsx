@@ -2,33 +2,25 @@ import { Badge, Box, Button, Image, Menu, MenuButton, MenuItem, MenuList, Text, 
 import { FaChevronDown } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 import { SUPPORTED_WALLETS } from "../constants";
-import { IWallet, useWallet } from "@razorlabs/razorkit";
-import useMovement from "../hooks/useMovement";
+import type { AdapterNotDetectedWallet, AdapterWallet } from "@aptos-labs/wallet-adapter-react";
+import { groupAndSortWallets, isInstallRequired, truncateAddress, useWallet } from "@aptos-labs/wallet-adapter-react";
+
 export function WalletSelector() {
-  const { select, disconnect, detectedWallets, configuredWallets, chain, name, account, connected } = useWallet();
-  const { truncateAddress } = useMovement();
-  const wallets = [...configuredWallets, ...detectedWallets];
+  const { account, connected, disconnect, wallets = [], network, wallet, connect } = useWallet();
+  const { availableWallets } = groupAndSortWallets(wallets);
 
-  const supportedWallets = wallets?.filter((wallet) => SUPPORTED_WALLETS.includes(wallet.name));
-
-  const onWalletSelected = (wallet: string) => {
-    select(wallet);
-  };
+  const supportedWallets = availableWallets?.filter((w) => SUPPORTED_WALLETS.includes(w.name));
 
   const getLabel = () => {
     return (
       <>
-        {chain && <p>Network: {chain.rpcUrl}</p>}
-        {name && <p>Wallet: {name}</p>}
+        {network && <p>Network: {network.name}</p>}
+        {wallet && <p>Wallet: {wallet.name}</p>}
       </>
     );
   };
 
-  const buttonText = account?.label
-    ? account?.label
-    : account?.address
-      ? truncateAddress(account?.address.toString())
-      : "Connect Wallet";
+  const buttonText = account?.ansName || truncateAddress(account?.address.toString() ?? "") || "Connect Wallet";
 
   if (connected) {
     return (
@@ -47,8 +39,13 @@ export function WalletSelector() {
           Connect Wallet
         </MenuButton>
         <MenuList>
+          {supportedWallets?.length === 0 && (
+            <MenuItem>
+              <Text>No compatible wallets found</Text>
+            </MenuItem>
+          )}
           {supportedWallets?.map((wallet) => {
-            return walletView(wallet, onWalletSelected);
+            return walletView(wallet, connect);
           })}
         </MenuList>
       </Menu>
@@ -56,46 +53,36 @@ export function WalletSelector() {
   );
 }
 
-const walletView = (wallet: IWallet, onWalletSelected: (wallet: string) => void) => {
-  const isWalletReady = wallet.installed;
-  // The user is on a mobile device
-  if (!isWalletReady) {
-    const mobileSupport = false; //(wallet as AdapterWallet).de.deeplinkProvider;
-    // If the user has a deep linked app, show the wallet
-    if (mobileSupport) {
-      return (
-        <MenuItem key={wallet.name} onClick={() => onWalletSelected(wallet.name)}>
-          <div className="wallet-menu-wrapper">
-            <div className="wallet-name-wrapper">
-              <img src={wallet.iconUrl} width={25} style={{ marginRight: 10 }} />
-              <Text className="wallet-selector-text">{wallet.name}</Text>
-            </div>
-            <Button>
-              <Text>Connect</Text>
-            </Button>
-          </div>
-        </MenuItem>
-      );
+const walletView = (wallet: AdapterWallet | AdapterNotDetectedWallet, connect: (walletName: string) => void) => {
+  const installRequired = isInstallRequired(wallet);
+  // Access icon property safely - wallet adapter uses 'icon' property
+  const iconUrl = (wallet as { icon?: string }).icon || "";
+
+  const handleClick = () => {
+    if (installRequired) {
+      if ("url" in wallet && wallet.url) {
+        window.open(wallet.url, "_blank");
+      }
+    } else {
+      connect(wallet.name);
     }
-    // Otherwise don't show anything
-    return null;
-  } else {
-    // The user is on a desktop device
-    return (
-      <MenuItem
-        key={wallet.name}
-        onClick={
-          wallet.installed
-            ? () => onWalletSelected(wallet.name)
-            : () => window.open(wallet.downloadUrl.browserExtension)
-        }
+  };
+
+  return (
+    <MenuItem key={wallet.name} onClick={handleClick}>
+      <Box
+        className="wallet-menu-wrapper"
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        width="100%"
       >
-        <Image src={wallet.iconUrl} width={25} marginRight={2} />
-        <Box flex={1} paddingRight={4}>
-          {wallet.name}
+        <Box className="wallet-name-wrapper" display="flex" alignItems="center">
+          {iconUrl && <Image src={iconUrl} width={25} marginRight={2} />}
+          <Text className="wallet-selector-text">{wallet.name}</Text>
         </Box>
-        {wallet.installed ? <Badge>Connect</Badge> : <Badge>Install</Badge>}
-      </MenuItem>
-    );
-  }
+        {installRequired ? <Badge>Install</Badge> : <Badge>Connect</Badge>}
+      </Box>
+    </MenuItem>
+  );
 };
