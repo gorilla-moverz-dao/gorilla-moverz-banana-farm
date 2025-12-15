@@ -8,11 +8,15 @@
  * @module
  */
 
+import type * as aptos from "../aptos.js";
 import type * as collections from "../collections.js";
+import type * as config from "../config.js";
 import type * as discordAllowlist from "../discordAllowlist.js";
+import type * as discordUtils from "../discordUtils.js";
 import type * as farm from "../farm.js";
 import type * as http from "../http.js";
 import type * as leaderboard from "../leaderboard.js";
+import type * as nftAllowlist from "../nftAllowlist.js";
 import type * as nfts from "../nfts.js";
 
 import type {
@@ -22,11 +26,15 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  aptos: typeof aptos;
   collections: typeof collections;
+  config: typeof config;
   discordAllowlist: typeof discordAllowlist;
+  discordUtils: typeof discordUtils;
   farm: typeof farm;
   http: typeof http;
   leaderboard: typeof leaderboard;
+  nftAllowlist: typeof nftAllowlist;
   nfts: typeof nfts;
 }>;
 

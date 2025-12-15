@@ -1,81 +1,15 @@
 import { httpAction } from "./_generated/server";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { query } from "./_generated/server";
 import { v } from "convex/values";
-
-// Discord interaction types
-const DiscordCommandType = {
-  Ping: 1,
-  ApplicationCommand: 2,
-} as const;
-
-interface DiscordPostData {
-  id: string;
-  application_id: string;
-  token: string;
-  type: number;
-  data: {
-    options: { name: string; value: string }[];
-  };
-  guild_id: string;
-  member: {
-    user: {
-      id: string;
-      username: string;
-    };
-  };
-}
-
-// Helper to convert hex string to Uint8Array
-function hexToUint8Array(hex: string): Uint8Array {
-  return new Uint8Array(hex.match(/.{1,2}/g)!.map((val) => parseInt(val, 16)));
-}
-
-// Verify Discord signature
-async function verifySignature(
-  signature: string,
-  timestamp: string,
-  body: string,
-  publicKey: string,
-): Promise<boolean> {
-  // Import tweetnacl dynamically (Convex supports this)
-  const naclModule = await import("tweetnacl");
-  // Handle both ESM default export and CommonJS module structure
-  const nacl = naclModule.default || naclModule;
-  const message = new TextEncoder().encode(timestamp + body);
-  return nacl.sign.detached.verify(message, hexToUint8Array(signature), hexToUint8Array(publicKey));
-}
-
-// Create Discord response helper
-function createDiscordResponse(message: string, isError: boolean = false): Response {
-  return new Response(
-    JSON.stringify({
-      type: 4,
-      data: {
-        content: `\`\`\`ansi\n${isError ? "\u001b[31m" : ""}${message}\`\`\``,
-        flags: 64,
-      },
-    }),
-    {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    },
-  );
-}
-
-// Create deferred response (type 5)
-function createDeferredResponse(): Response {
-  return new Response(
-    JSON.stringify({
-      type: 5,
-      flags: 64,
-    }),
-    {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    },
-  );
-}
+import {
+  DiscordCommandType,
+  DiscordPostData,
+  validateDiscordRequest,
+  createDiscordResponse,
+  createDeferredResponse,
+} from "./discordUtils";
+import { MOVEMENT_FULLNODE_URL } from "./config";
 
 // Query to get collection by guild_id
 export const getCollectionByGuildId = query({
@@ -111,45 +45,13 @@ export const checkDuplicatePlayer = query({
 
 // Main HTTP handler for Discord NFT allowlist
 export const discordNftAllowlistHandler = httpAction(async (ctx, request) => {
-  // Validate request method and headers
-  if (request.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { "Content-Type": "application/json" },
-    });
+  // Validate and verify Discord request
+  const validation = await validateDiscordRequest(request);
+  if (!validation.valid) {
+    return validation.error!;
   }
 
-  const signature = request.headers.get("X-Signature-Ed25519");
-  const timestamp = request.headers.get("X-Signature-Timestamp");
-
-  if (!signature || !timestamp) {
-    return new Response(JSON.stringify({ error: "Missing required headers" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const body = await request.text();
-
-  // Verify Discord signature
-  const publicKey = process.env.DISCORD_PUBLIC_KEY;
-  if (!publicKey) {
-    console.error("DISCORD_PUBLIC_KEY not configured");
-    return new Response(JSON.stringify({ error: "Server configuration error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const valid = await verifySignature(signature, timestamp, body, publicKey);
-  if (!valid) {
-    return new Response(JSON.stringify({ error: "Invalid request" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const post: DiscordPostData = JSON.parse(body);
+  const post: DiscordPostData = JSON.parse(validation.body);
   const { type = 0, data = { options: [] } } = post;
 
   // Handle ping (type 1)
@@ -177,9 +79,16 @@ export const discordNftAllowlistHandler = httpAction(async (ctx, request) => {
       return createDiscordResponse("Address not provided", true);
     }
 
-    // TODO: Validate the address against Aptos/Movement network
-    // This would require an action to make external API calls
-    // For now, we skip this validation
+    // Validate the address against Movement network
+    try {
+      const res = await fetch(`${MOVEMENT_FULLNODE_URL}/accounts/${address}`);
+      if (!res.ok) {
+        return createDiscordResponse(`Address not found on Movement network`, true);
+      }
+    } catch (err) {
+      console.error("Address validation failed:", err);
+      return createDiscordResponse("Failed to validate address", true);
+    }
 
     try {
       // Check for duplicate discord user
@@ -204,13 +113,17 @@ export const discordNftAllowlistHandler = httpAction(async (ctx, request) => {
         return createDiscordResponse(`Wallet address already submitted: ${existingByWallet.wallet_address}`, true);
       }
 
-      // TODO: Forward request for delayed update of message
-      // The original implementation forwarded to nft-allowlist for async processing
-      // because Discord requires response within 3 seconds.
-      // Implement this using a Convex action or scheduled function:
-      // - Validate wallet address against blockchain
-      // - Insert player record into database
-      // - Send follow-up Discord message via webhook
+      // Schedule async processing (blockchain tx, db insert, Discord follow-up)
+      // Discord requires response within 3 seconds, so we defer the actual work
+      await ctx.scheduler.runAfter(0, internal.nftAllowlist.processAllowlistRequest, {
+        address,
+        collectionId: collection.collection_address,
+        discordUserId: post.member.user.id,
+        discordUserName: post.member.user.username,
+        guildId: post.guild_id,
+        applicationId: post.application_id,
+        interactionToken: post.token,
+      });
 
       // Return deferred response to Discord
       return createDeferredResponse();
