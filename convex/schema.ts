@@ -9,7 +9,7 @@ export default defineSchema({
     discord_link: v.string(),
     discord_guild_id: v.string(),
     help_text: v.string(),
-  }),
+  }).index("by_slug", ["slug"]),
   players: defineTable({
     discord_user_id: v.string(),
     discord_user_name: v.string(),
@@ -21,7 +21,7 @@ export default defineSchema({
     collection_id: v.id("collections"),
     nft_number: v.number(),
     image: v.string(),
-  }),
+  }).index("by_collection_and_number", ["collection_id", "nft_number"]),
   leaderboard: defineTable({
     discord_user_id: v.string(),
     discord_user_name: v.string(),
