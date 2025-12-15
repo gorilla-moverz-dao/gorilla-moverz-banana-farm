@@ -9,6 +9,7 @@
  */
 
 import type * as collections from "../collections.js";
+import type * as discordAllowlist from "../discordAllowlist.js";
 import type * as farm from "../farm.js";
 import type * as http from "../http.js";
 import type * as leaderboard from "../leaderboard.js";
@@ -22,6 +23,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   collections: typeof collections;
+  discordAllowlist: typeof discordAllowlist;
   farm: typeof farm;
   http: typeof http;
   leaderboard: typeof leaderboard;

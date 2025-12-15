@@ -1,8 +1,16 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api } from "./_generated/api";
+import { discordNftAllowlistHandler } from "./discordAllowlist";
 
 const http = httpRouter();
+
+// Discord NFT Allowlist endpoint
+http.route({
+  path: "/discord-nft-allowlist",
+  method: "POST",
+  handler: discordNftAllowlistHandler,
+});
 
 http.route({
   pathPrefix: "/nft/",
