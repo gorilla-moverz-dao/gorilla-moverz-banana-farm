@@ -1,5 +1,4 @@
 import { Link, useSearchParams } from "react-router-dom";
-import useFarmCollections from "./useFarmCollections";
 import FarmerOverview from "./FarmOverview";
 import { Card, CardBody, Heading, SimpleGrid, Stack, Image, Box, Spinner, Center } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
@@ -8,8 +7,6 @@ import { useVerifiedCollectionsDetails } from "./useVerifiedCollectionsDetails";
 import useFarmVerifiedCollections from "./useFarmVerifiedCollections";
 
 function FarmPartners() {
-  const { data, error, isLoading: isCollectionsLoading } = useFarmCollections();
-  const collections = data?.filter((collection) => collection.slug !== "farmer");
   const [searchParams] = useSearchParams();
   const collectionId = searchParams.get("collectionId");
 
@@ -18,9 +15,7 @@ function FarmPartners() {
   const { data: verifiedCollections, isLoading: isVerifiedDetailsLoading } = useVerifiedCollectionsDetails();
 
   // Wait for all data sources to be ready
-  const isLoading = isCollectionsLoading || isVerifiedCollectionsLoading || isVerifiedDetailsLoading;
-
-  if (error) return null;
+  const isLoading = isVerifiedCollectionsLoading || isVerifiedDetailsLoading;
 
   if (collectionId) {
     return (
@@ -45,15 +40,6 @@ function FarmPartners() {
 
   // Combine regular collections and verified collections
   const allCollections = [
-    ...(collections || []).map((collection) => ({
-      id: collection.id,
-      name: collection.name,
-      collection_address: collection.collection_address,
-      slug: collection.slug,
-      isVerified: false,
-      uri: undefined as string | undefined,
-      description: undefined as string | undefined,
-    })),
     ...(verifiedCollections || []).map((collection) => ({
       id: collection.collection_id,
       name: collection.collection_name,

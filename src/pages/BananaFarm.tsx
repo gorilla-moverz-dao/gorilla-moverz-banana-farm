@@ -35,7 +35,7 @@ function BananaFarm() {
 
   const navigationItems = [
     { id: "farm", name: "Banana farm" },
-    { id: "partner", name: "Partner NFTs" },
+    // { id: "partner", name: "Partner NFTs" },
     { id: "leaderboard", name: "Leaderboard" },
     { id: "gameplay", name: "Gameplay" },
   ];

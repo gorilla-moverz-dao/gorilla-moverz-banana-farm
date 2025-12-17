@@ -1,29 +1,22 @@
 import {
-  aptosClient,
   aptosReadOnlyClient,
   bananaFarmABI,
   bananaFarmViewClient,
   launchpadABI,
   launchpadViewClient,
 } from "../services/movement-client";
-import { AptosApiType, InputGenerateTransactionPayloadData, UserTransactionResponse } from "@aptos-labs/ts-sdk";
-import { useWallet } from "@razorlabs/razorkit";
-import { createEntryPayload } from "@thalalabs/surf";
+import { AptosApiType } from "@aptos-labs/ts-sdk";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { request } from "graphql-request";
+import { useWalletClient } from "@thalalabs/surf/hooks";
+import { MODULE_ADDRESS } from "../constants";
 
 const useMovement = () => {
-  const { account, signAndSubmitTransaction } = useWallet();
+  const { account } = useWallet();
+  const { client: walletClient } = useWalletClient();
 
-  const signAndAwaitTransaction = async (data: InputGenerateTransactionPayloadData) => {
-    const response = await signAndSubmitTransaction({ payload: data });
-    if (response.status === "Approved") {
-      const transaction = await aptosClient.waitForTransaction({ transactionHash: response.args.hash });
-      return transaction as UserTransactionResponse;
-    } else {
-      console.log("Transaction rejected: ", response);
-      throw new Error("Transaction rejected: " + response.status);
-    }
-  };
+  const launchpadClient = walletClient?.useABI({ ...launchpadABI, address: MODULE_ADDRESS });
+  const bananaFarmClient = walletClient?.useABI({ ...bananaFarmABI, address: MODULE_ADDRESS });
 
   const getAccountCoinsData = async () => {
     if (!account?.address) return [];
@@ -40,11 +33,11 @@ const useMovement = () => {
 
   return {
     address: account ? (account.address.toString() as `0x${string}`) : undefined,
-    signAndAwaitTransaction,
     getAccountCoinsData,
-    createEntryPayload,
     bananaFarmViewClient,
+    bananaFarmClient,
     bananaFarmABI,
+    launchpadClient,
     launchpadViewClient,
     launchpadABI,
     aptosReadOnlyClient,

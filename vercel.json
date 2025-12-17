@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/nfts/:slug/metadata/:match*",
-      "destination": "https://pinphweythafvrejqfgm.supabase.co/functions/v1/nft-banana-farmer/:slug/:match*"
+      "destination": "https://gallant-sockeye-598.convex.site/nft/:slug/:match*"
     },
     {
       "source": "/nft-founders-collection/:match*",

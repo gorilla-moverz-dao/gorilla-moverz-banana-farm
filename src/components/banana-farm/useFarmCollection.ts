@@ -1,8 +1,10 @@
-import useFarmCollections from "./useFarmCollections";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 const useFarmCollection = (collectionId: string) => {
-  const { data } = useFarmCollections();
-  return data?.find((collection) => collection.collection_address === collectionId);
+  return useQuery(api.collections.queryCollection, {
+    collectionId,
+  });
 };
 
 export default useFarmCollection;

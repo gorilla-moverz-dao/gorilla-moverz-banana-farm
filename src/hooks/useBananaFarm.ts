@@ -1,19 +1,25 @@
+import { UserTransactionResponse } from "@aptos-labs/ts-sdk";
 import useMovement from "./useMovement";
+import { useTransaction } from "./useTransaction";
 
 const useBananaFarm = () => {
-  const { address, signAndAwaitTransaction, createEntryPayload, bananaFarmABI, bananaFarmViewClient } = useMovement();
+  const { address, bananaFarmViewClient, bananaFarmClient } = useMovement();
+  const { executeTransaction } = useTransaction();
 
   const farm = async (nft: `0x${string}`, partnerNfts: `0x${string}`[]) => {
-    const response = await signAndAwaitTransaction(
-      createEntryPayload(bananaFarmABI, {
-        function: "farm",
-        functionArguments: [nft, partnerNfts],
-        typeArguments: [],
+    if (!bananaFarmClient) {
+      throw new Error("Banana farm client not found");
+    }
+    const response = await executeTransaction(
+      bananaFarmClient.farm({
+        arguments: [nft, partnerNfts],
+        type_arguments: [],
       }),
     );
 
     const amount =
-      response.events?.find((i) => i.type === "0x1::fungible_asset::Deposit")?.data.amount / Math.pow(10, 9);
+      (response.result as UserTransactionResponse).events?.find((i) => i.type === "0x1::fungible_asset::Deposit")?.data
+        .amount / Math.pow(10, 9);
 
     return amount;
   };

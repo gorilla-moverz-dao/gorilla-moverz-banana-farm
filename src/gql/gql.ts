@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as types from './graphql';
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+
+
 
 /**
  * Map of all GraphQL operations in the project.
@@ -11,8 +12,17 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * 3. It does not support dead code elimination, so it will add unused operations.
  *
  * Therefore it is highly recommended to use the babel or swc plugin for production.
+ * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
-const documents = {
+type Documents = {
+    "\n  query GetLeaderboard($asset_type: String, $wallet_address: String!) {\n    current_fungible_asset_balances(\n      where: { asset_type: { _eq: $asset_type }, _and: { owner_address: { _eq: $wallet_address } } }\n      order_by: { amount: desc }\n    ) {\n      asset_type\n      owner_address\n      amount\n    }\n  }\n": typeof types.GetLeaderboardDocument,
+    "\n  query GetAccountNfts($address: String, $collectionIds: [String!]) {\n    current_token_ownerships_v2(\n      where: {\n        owner_address: { _eq: $address }\n        amount: { _gt: \"0\" }\n        current_token_data: { current_collection: { collection_id: { _in: $collectionIds } } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          creator_address\n          uri\n          __typename\n        }\n        description\n        token_name\n        token_data_id\n        token_standard\n        token_uri\n        __typename\n      }\n      owner_address\n      amount\n      __typename\n    }\n  }\n": typeof types.GetAccountNftsDocument,
+    "\n  query GetCollectionDetails($collectionIds: [String!]) {\n    current_collections_v2(where: { collection_id: { _in: $collectionIds } }) {\n      collection_id\n      collection_name\n      description\n      creator_address\n      uri\n      max_supply\n      current_supply\n      __typename\n    }\n  }\n": typeof types.GetCollectionDetailsDocument,
+    "\n  query GetTokenData($collection_id: String) {\n    current_collections_v2(where: { collection_id: { _eq: $collection_id } }, limit: 1) {\n      creator_address\n      collection_id\n      collection_name\n      current_supply\n      max_supply\n      uri\n      description\n    }\n    current_collection_ownership_v2_view(\n      where: { collection_id: { _eq: $collection_id } }\n      order_by: { last_transaction_version: desc }\n    ) {\n      owner_address\n    }\n    current_collection_ownership_v2_view_aggregate(where: { collection_id: { _eq: $collection_id } }) {\n      aggregate {\n        count(distinct: true, columns: owner_address)\n      }\n    }\n  }\n": typeof types.GetTokenDataDocument,
+    "\n  query GetNft($id: String, $collectionId: String!) {\n    current_token_ownerships_v2(\n      where: {\n        amount: { _gt: \"0\" }\n        current_token_data: { collection_id: { _eq: $collectionId }, token_name: { _eq: $id } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          uri\n        }\n        description\n        token_name\n        token_data_id\n        token_uri\n        token_properties\n      }\n      owner_address\n      amount\n    }\n  }\n": typeof types.GetNftDocument,
+};
+const documents: Documents = {
+    "\n  query GetLeaderboard($asset_type: String, $wallet_address: String!) {\n    current_fungible_asset_balances(\n      where: { asset_type: { _eq: $asset_type }, _and: { owner_address: { _eq: $wallet_address } } }\n      order_by: { amount: desc }\n    ) {\n      asset_type\n      owner_address\n      amount\n    }\n  }\n": types.GetLeaderboardDocument,
     "\n  query GetAccountNfts($address: String, $collectionIds: [String!]) {\n    current_token_ownerships_v2(\n      where: {\n        owner_address: { _eq: $address }\n        amount: { _gt: \"0\" }\n        current_token_data: { current_collection: { collection_id: { _in: $collectionIds } } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          creator_address\n          uri\n          __typename\n        }\n        description\n        token_name\n        token_data_id\n        token_standard\n        token_uri\n        __typename\n      }\n      owner_address\n      amount\n      __typename\n    }\n  }\n": types.GetAccountNftsDocument,
     "\n  query GetCollectionDetails($collectionIds: [String!]) {\n    current_collections_v2(where: { collection_id: { _in: $collectionIds } }) {\n      collection_id\n      collection_name\n      description\n      creator_address\n      uri\n      max_supply\n      current_supply\n      __typename\n    }\n  }\n": types.GetCollectionDetailsDocument,
     "\n  query GetTokenData($collection_id: String) {\n    current_collections_v2(where: { collection_id: { _eq: $collection_id } }, limit: 1) {\n      creator_address\n      collection_id\n      collection_name\n      current_supply\n      max_supply\n      uri\n      description\n    }\n    current_collection_ownership_v2_view(\n      where: { collection_id: { _eq: $collection_id } }\n      order_by: { last_transaction_version: desc }\n    ) {\n      owner_address\n    }\n    current_collection_ownership_v2_view_aggregate(where: { collection_id: { _eq: $collection_id } }) {\n      aggregate {\n        count(distinct: true, columns: owner_address)\n      }\n    }\n  }\n": types.GetTokenDataDocument,
@@ -21,37 +31,26 @@ const documents = {
 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- *
- *
- * @example
- * ```ts
- * const query = graphql(`query GetUser($id: ID!) { user(id: $id) { name } }`);
- * ```
- *
- * The query argument is unknown!
- * Please regenerate the types.
  */
-export function graphql(source: string): unknown;
+export function graphql(source: "\n  query GetLeaderboard($asset_type: String, $wallet_address: String!) {\n    current_fungible_asset_balances(\n      where: { asset_type: { _eq: $asset_type }, _and: { owner_address: { _eq: $wallet_address } } }\n      order_by: { amount: desc }\n    ) {\n      asset_type\n      owner_address\n      amount\n    }\n  }\n"): typeof import('./graphql').GetLeaderboardDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetAccountNfts($address: String, $collectionIds: [String!]) {\n    current_token_ownerships_v2(\n      where: {\n        owner_address: { _eq: $address }\n        amount: { _gt: \"0\" }\n        current_token_data: { current_collection: { collection_id: { _in: $collectionIds } } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          creator_address\n          uri\n          __typename\n        }\n        description\n        token_name\n        token_data_id\n        token_standard\n        token_uri\n        __typename\n      }\n      owner_address\n      amount\n      __typename\n    }\n  }\n"): typeof import('./graphql').GetAccountNftsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetCollectionDetails($collectionIds: [String!]) {\n    current_collections_v2(where: { collection_id: { _in: $collectionIds } }) {\n      collection_id\n      collection_name\n      description\n      creator_address\n      uri\n      max_supply\n      current_supply\n      __typename\n    }\n  }\n"): typeof import('./graphql').GetCollectionDetailsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetTokenData($collection_id: String) {\n    current_collections_v2(where: { collection_id: { _eq: $collection_id } }, limit: 1) {\n      creator_address\n      collection_id\n      collection_name\n      current_supply\n      max_supply\n      uri\n      description\n    }\n    current_collection_ownership_v2_view(\n      where: { collection_id: { _eq: $collection_id } }\n      order_by: { last_transaction_version: desc }\n    ) {\n      owner_address\n    }\n    current_collection_ownership_v2_view_aggregate(where: { collection_id: { _eq: $collection_id } }) {\n      aggregate {\n        count(distinct: true, columns: owner_address)\n      }\n    }\n  }\n"): typeof import('./graphql').GetTokenDataDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetNft($id: String, $collectionId: String!) {\n    current_token_ownerships_v2(\n      where: {\n        amount: { _gt: \"0\" }\n        current_token_data: { collection_id: { _eq: $collectionId }, token_name: { _eq: $id } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          uri\n        }\n        description\n        token_name\n        token_data_id\n        token_uri\n        token_properties\n      }\n      owner_address\n      amount\n    }\n  }\n"): typeof import('./graphql').GetNftDocument;
 
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query GetAccountNfts($address: String, $collectionIds: [String!]) {\n    current_token_ownerships_v2(\n      where: {\n        owner_address: { _eq: $address }\n        amount: { _gt: \"0\" }\n        current_token_data: { current_collection: { collection_id: { _in: $collectionIds } } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          creator_address\n          uri\n          __typename\n        }\n        description\n        token_name\n        token_data_id\n        token_standard\n        token_uri\n        __typename\n      }\n      owner_address\n      amount\n      __typename\n    }\n  }\n"): (typeof documents)["\n  query GetAccountNfts($address: String, $collectionIds: [String!]) {\n    current_token_ownerships_v2(\n      where: {\n        owner_address: { _eq: $address }\n        amount: { _gt: \"0\" }\n        current_token_data: { current_collection: { collection_id: { _in: $collectionIds } } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          creator_address\n          uri\n          __typename\n        }\n        description\n        token_name\n        token_data_id\n        token_standard\n        token_uri\n        __typename\n      }\n      owner_address\n      amount\n      __typename\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query GetCollectionDetails($collectionIds: [String!]) {\n    current_collections_v2(where: { collection_id: { _in: $collectionIds } }) {\n      collection_id\n      collection_name\n      description\n      creator_address\n      uri\n      max_supply\n      current_supply\n      __typename\n    }\n  }\n"): (typeof documents)["\n  query GetCollectionDetails($collectionIds: [String!]) {\n    current_collections_v2(where: { collection_id: { _in: $collectionIds } }) {\n      collection_id\n      collection_name\n      description\n      creator_address\n      uri\n      max_supply\n      current_supply\n      __typename\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query GetTokenData($collection_id: String) {\n    current_collections_v2(where: { collection_id: { _eq: $collection_id } }, limit: 1) {\n      creator_address\n      collection_id\n      collection_name\n      current_supply\n      max_supply\n      uri\n      description\n    }\n    current_collection_ownership_v2_view(\n      where: { collection_id: { _eq: $collection_id } }\n      order_by: { last_transaction_version: desc }\n    ) {\n      owner_address\n    }\n    current_collection_ownership_v2_view_aggregate(where: { collection_id: { _eq: $collection_id } }) {\n      aggregate {\n        count(distinct: true, columns: owner_address)\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetTokenData($collection_id: String) {\n    current_collections_v2(where: { collection_id: { _eq: $collection_id } }, limit: 1) {\n      creator_address\n      collection_id\n      collection_name\n      current_supply\n      max_supply\n      uri\n      description\n    }\n    current_collection_ownership_v2_view(\n      where: { collection_id: { _eq: $collection_id } }\n      order_by: { last_transaction_version: desc }\n    ) {\n      owner_address\n    }\n    current_collection_ownership_v2_view_aggregate(where: { collection_id: { _eq: $collection_id } }) {\n      aggregate {\n        count(distinct: true, columns: owner_address)\n      }\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query GetNft($id: String, $collectionId: String!) {\n    current_token_ownerships_v2(\n      where: {\n        amount: { _gt: \"0\" }\n        current_token_data: { collection_id: { _eq: $collectionId }, token_name: { _eq: $id } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          uri\n        }\n        description\n        token_name\n        token_data_id\n        token_uri\n        token_properties\n      }\n      owner_address\n      amount\n    }\n  }\n"): (typeof documents)["\n  query GetNft($id: String, $collectionId: String!) {\n    current_token_ownerships_v2(\n      where: {\n        amount: { _gt: \"0\" }\n        current_token_data: { collection_id: { _eq: $collectionId }, token_name: { _eq: $id } }\n      }\n    ) {\n      current_token_data {\n        collection_id\n        largest_property_version_v1\n        current_collection {\n          collection_id\n          collection_name\n          description\n          uri\n        }\n        description\n        token_name\n        token_data_id\n        token_uri\n        token_properties\n      }\n      owner_address\n      amount\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
 }
-
-export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;

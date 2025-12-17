@@ -1,7 +1,9 @@
 import { Network } from "@aptos-labs/ts-sdk";
 
-export const SUPRA_API_URL = import.meta.env?.VITE_SUPRA_API_URL;
-export const SURPA_ANON_KEY = import.meta.env?.VITE_SUPRA_ANON_KEY;
+const env = (import.meta as unknown as { env: Record<string, string> }).env ?? {};
+
+export const SUPRA_API_URL = env.VITE_SUPRA_API_URL;
+export const SURPA_ANON_KEY = env.VITE_SUPRA_ANON_KEY;
 export const MODULE_ADDRESS = "8008ff07bcb3f2c8848ffd7db1688b7ca08ecc90d63bac7ae76799704b2fc212";
 export const FULL_NODE = "https://mainnet.movementnetwork.xyz/v1";
 export const FULL_NODE_READ_ONLY = "https://mainnet.movementnetwork.xyz/v1";
