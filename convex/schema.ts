@@ -31,5 +31,7 @@ export default defineSchema({
     discord_user_name: v.string(),
     wallet_address: v.string(),
     banana_count: v.number(),
-  }).index("by_banana_count", { fields: ["banana_count"] }),
+  })
+    .index("by_banana_count", { fields: ["banana_count"] })
+    .index("by_wallet_address", ["wallet_address"]),
 });

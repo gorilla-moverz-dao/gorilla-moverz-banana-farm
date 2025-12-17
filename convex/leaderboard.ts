@@ -20,7 +20,7 @@ export const upsertLeaderboardEntry = internalMutation({
   handler: async (ctx, args) => {
     const existing = await ctx.db
       .query("leaderboard")
-      .filter((q) => q.eq(q.field("wallet_address"), args.wallet_address))
+      .withIndex("by_wallet_address", (q) => q.eq("wallet_address", args.wallet_address))
       .first();
 
     if (existing) {
@@ -28,7 +28,7 @@ export const upsertLeaderboardEntry = internalMutation({
         banana_count: args.banana_count,
       });
     } else {
-      const bananaFarmerGuildId = "1248584514494529657";
+      const bananaFarmerGuildId = "1204497818987921518";
       const allowlist = await ctx.db
         .query("allowlist")
         .withIndex("by_guild_and_wallet", (q) =>
