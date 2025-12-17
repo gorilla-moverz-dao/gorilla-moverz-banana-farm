@@ -11,35 +11,46 @@ import {
 } from "./discordUtils";
 import { MOVEMENT_FULLNODE_URL } from "./config";
 
-// Query to get collection by guild_id
+// Query to get collection by guild_id (uses index)
 export const getCollectionByGuildId = query({
   args: { guildId: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
       .query("collections")
-      .filter((q) => q.eq(q.field("discord_guild_id"), args.guildId))
+      .withIndex("by_discord_guild_id", (q) => q.eq("discord_guild_id", args.guildId))
       .first();
   },
 });
 
-// Query to check for duplicate player entries
-export const checkDuplicatePlayer = query({
+// Query to check for duplicate player by discord user (uses index)
+export const checkDuplicateByUser = query({
   args: {
     guildId: v.string(),
-    column: v.union(v.literal("discord_user_id"), v.literal("wallet_address")),
-    value: v.string(),
+    discordUserId: v.string(),
   },
   handler: async (ctx, args) => {
-    const query = ctx.db
-      .query("players")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("guild_id"), args.guildId),
-          q.eq(q.field(args.column), args.value),
-          q.eq(q.field("deleted"), false),
-        ),
-      );
-    return await query.first();
+    return await ctx.db
+      .query("allowlist")
+      .withIndex("by_guild_and_user", (q) =>
+        q.eq("guild_id", args.guildId).eq("discord_user_id", args.discordUserId).eq("deleted", false),
+      )
+      .first();
+  },
+});
+
+// Query to check for duplicate player by wallet address (uses index)
+export const checkDuplicateByWallet = query({
+  args: {
+    guildId: v.string(),
+    walletAddress: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("allowlist")
+      .withIndex("by_guild_and_wallet", (q) =>
+        q.eq("guild_id", args.guildId).eq("wallet_address", args.walletAddress).eq("deleted", false),
+      )
+      .first();
   },
 });
 
@@ -92,10 +103,9 @@ export const discordNftAllowlistHandler = httpAction(async (ctx, request) => {
 
     try {
       // Check for duplicate discord user
-      const existingByUser = await ctx.runQuery(api.discordAllowlist.checkDuplicatePlayer, {
+      const existingByUser = await ctx.runQuery(api.discordAllowlist.checkDuplicateByUser, {
         guildId: post.guild_id,
-        column: "discord_user_id",
-        value: post.member.user.id,
+        discordUserId: post.member.user.id,
       });
 
       if (existingByUser) {
@@ -103,10 +113,9 @@ export const discordNftAllowlistHandler = httpAction(async (ctx, request) => {
       }
 
       // Check for duplicate wallet address
-      const existingByWallet = await ctx.runQuery(api.discordAllowlist.checkDuplicatePlayer, {
+      const existingByWallet = await ctx.runQuery(api.discordAllowlist.checkDuplicateByWallet, {
         guildId: post.guild_id,
-        column: "wallet_address",
-        value: address,
+        walletAddress: address,
       });
 
       if (existingByWallet) {

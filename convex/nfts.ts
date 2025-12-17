@@ -20,9 +20,7 @@ export const getNftBySlugAndNumber = query({
     // Find NFT by collection_id and nft_number
     const nft = await ctx.db
       .query("nfts")
-      .withIndex("by_collection_and_number", (q) =>
-        q.eq("collection_id", collection._id).eq("nft_number", args.nft_number),
-      )
+      .withIndex("by_slug_and_number", (q) => q.eq("slug", args.slug).eq("nft_number", args.nft_number))
       .first();
 
     if (!nft) {

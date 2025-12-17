@@ -108,7 +108,7 @@ export const insertPlayer = internalMutation({
     guildId: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("players", {
+    return await ctx.db.insert("allowlist", {
       discord_user_id: args.discordUserId,
       discord_user_name: args.discordUserName,
       wallet_address: args.walletAddress,
