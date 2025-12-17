@@ -4,7 +4,7 @@ import { v } from "convex/values";
 export const queryLeaderboard = query({
   args: {},
   handler: async (ctx) => {
-    return (await ctx.db.query("leaderboard").order("desc").take(100)).map((player) => ({
+    return (await ctx.db.query("leaderboard").withIndex("by_banana_count").order("desc").take(100)).map((player) => ({
       discord_user_name: player.discord_user_name,
       banana_count: player.banana_count,
       wallet_address: player.wallet_address,
