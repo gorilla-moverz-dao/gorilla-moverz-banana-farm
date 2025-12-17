@@ -39,23 +39,8 @@ http.route({
 
     const imageUrl = `https://farm.gorilla-moverz.xyz/nfts/${slug}/images/${nft.image.replace(".png", ".webp")}`;
 
-    // Return NFT metadata as JSON
-    return new Response(
-      JSON.stringify({
-        name: `${nft.collectionName} | #${nft.nft_number}`,
-        description: `${nft.collectionName} | #${nft.nft_number}`,
-        image: imageUrl,
-        attributes: [],
-        external_url: "https://farm.gorilla-moverz.xyz",
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      },
-    );
+    // Redirect to the image URL
+    return Response.redirect(imageUrl, 302);
   }),
 });
 
